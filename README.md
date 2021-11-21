@@ -4,7 +4,7 @@ This repository contains the official python toolkit for running experiments and
 
 [VideoCube](http://videocube.aitestunion.com/) is a high-quality and large-scale benchmark to create a challenging real-world experimental environment for Global Instance Tracking (GIT) task.
 
-[Demo](https://github.com/huuuuusy/videocube-toolkit/demo)
+![](./demo/demo.gif)
 
 ### Installation
 
