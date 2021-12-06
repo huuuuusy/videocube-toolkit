@@ -22,10 +22,14 @@ class VideoCube(object):
         
         self.seq_names = ['%03d'%num for num in np.loadtxt(os.path.join(root_dir, '%s_list.txt'%subset))]
         
-        self.seq_dirs = [os.path.join(root_dir, subset, s,'frame_'+s) for s in self.seq_names]
-    
-        self.anno_files = [os.path.join(root_dir, subset, s,'result_%s.txt'%s) for s in self.seq_names]
-        self.restart_files = [os.path.join(root_dir, subset, s,'restart_%s.txt'%s) for s in self.seq_names]
+        if subset in ['train','val','test']:
+            self.seq_dirs = [os.path.join(root_dir, subset, s,'frame_'+s) for s in self.seq_names]
+            self.anno_files = [os.path.join(root_dir, subset, s,'result_%s.txt'%s) for s in self.seq_names]
+            self.restart_files = [os.path.join(root_dir, subset, s,'restart_%s.txt'%s) for s in self.seq_names]
+        elif subset == 'eye':
+            self.seq_dirs = [os.path.join(root_dir, 'test', s,'frame_'+s) for s in self.seq_names]
+            self.anno_files = [os.path.join(root_dir, 'test', s,'result_%s.txt'%s) for s in self.seq_names]
+            self.restart_files = [os.path.join(root_dir, 'test', s,'restart_%s.txt'%s) for s in self.seq_names]
     
     
     def __getitem__(self, index):

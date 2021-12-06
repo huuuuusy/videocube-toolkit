@@ -118,7 +118,7 @@ class ExperimentVideoCube(object):
             self._record(record_file, time_file, boxes, times)
 
 
-    def report(self, tracker_names, attribute_name, eye_mode):
+    def report(self, tracker_names, attribute_name):
         """
         Evaluate the tracker on VideoCube subset.
         """
@@ -130,12 +130,7 @@ class ExperimentVideoCube(object):
         subset_analysis_dir = os.path.join(self.analysis_dir, self.subset)
         makedir(subset_analysis_dir)
 
-        if eye_mode:
-            # evaluate with human in 10 turing test videos
-            report_dir = os.path.join(subset_report_dir, 'eye')
-        else:
-            # evaluate in subset
-            report_dir = os.path.join(subset_report_dir, tracker_names[0])
+        report_dir = os.path.join(subset_report_dir, tracker_names[0])
         makedir(report_dir)
 
         performance = {}
@@ -323,7 +318,7 @@ class ExperimentVideoCube(object):
         with open(report_file, 'w') as f:
             json.dump(performance, f, indent=4)
 
-        self.plot_curves_([report_file], tracker_names, attribute_name, self.repetition, eye_mode)
+        self.plot_curves_([report_file], tracker_names, attribute_name, self.repetition)
 
         return performance
     
@@ -353,176 +348,6 @@ class ExperimentVideoCube(object):
         elif attribute_name == 'delta_color_constancy_tran':
             data = data[data.apply(lambda x: x[attribute_name] >= 0.00001, axis=1)]
         return data
-
-
-    def report_all(self, tracker_names, attribute_name, eye_mode):
-        """
-        Comprehensive evaluation of all repetitions
-        """
-        assert isinstance(tracker_names, (list, tuple))
-
-        subset_report_dir = os.path.join(self.report_dir, self.subset)
-        makedir(subset_report_dir)
-
-        subset_analysis_dir = os.path.join(self.analysis_dir, self.subset)
-        makedir(subset_analysis_dir)
-
-        if eye_mode:
-            # evaluate with human in 10 turing test videos
-            report_dir = os.path.join(subset_report_dir, 'eye')
-        else:
-            # evaluate in subset
-            report_dir = os.path.join(subset_report_dir, tracker_names[0])
-        makedir(report_dir)
-
-        performance = {}
-        for name in tracker_names:
-            performance.update({name: {
-                    'overall': {},
-                    'seq_wise': {}}})
-            tracker_performance = {}
-            
-            # path to save average performance in all repetitions
-            if attribute_name is None:
-                single_all_file = os.path.join(subset_analysis_dir,'%s_%s_normal_all.json'%(name, self.subset))
-            else:
-                single_all_file = os.path.join(subset_analysis_dir, '%s_%s_%s_all.json'%(name, self.subset, attribute_name))
-
-            for rep in range(self.repetition):
-                # update tracker performance in all repetitions
-                rep = str(rep+1)
-                if attribute_name is None:
-                    single_report_file = os.path.join(subset_analysis_dir, '%s_%s_normal_%s.json'%(name, self.subset, rep))
-                else:
-                    single_report_file = os.path.join(subset_analysis_dir, '%s_%s_%s_%s.json'%(name, self.subset, attribute_name, rep))
-                f = open(single_report_file,'r',encoding='utf-8')
-                single_performance = json.load(f) 
-                tracker_performance.update({rep:single_performance})
-                f.close()  
-
-            success_curve_iou_list = np.zeros((self.repetition, self.nbins_iou))
-            success_curve_diou_list = np.zeros((self.repetition, self.nbins_iou))
-            success_curve_giou_list = np.zeros((self.repetition, self.nbins_iou))
-            precision_curve_list = np.zeros((self.repetition, self.nbins_ce))
-            normalized_precision_curve_list = np.zeros((self.repetition, self.nbins_ce))
-
-            success_score_iou_list = np.zeros((self.repetition, ))
-            success_score_diou_list = np.zeros((self.repetition, ))
-            success_score_giou_list = np.zeros((self.repetition, ))
-            precision_score_list = np.zeros((self.repetition, ))
-            norm_prec_score_list = np.zeros((self.repetition, ))
-
-            success_rate_iou_list = np.zeros((self.repetition, ))
-            success_rate_diou_list = np.zeros((self.repetition, ))
-            success_rate_giou_list = np.zeros((self.repetition, ))
-            speed_fps_list = np.zeros((self.repetition, ))
-            
-            for i in range(self.repetition):
-                repetition = str(i+1)
-                success_curve_iou_list[i] = np.array(tracker_performance[repetition]['overall']['success_curve_iou'])
-                success_curve_diou_list[i] = np.array(tracker_performance[repetition]['overall']['success_curve_diou'])
-                success_curve_giou_list[i] = np.array(tracker_performance[repetition]['overall']['success_curve_giou'])
-                precision_curve_list[i] = np.array(tracker_performance[repetition]['overall']['precision_curve'])
-                normalized_precision_curve_list[i] = np.array(tracker_performance[repetition]['overall']['normalized_precision_curve'])
-                success_score_iou_list[i] = np.array(tracker_performance[repetition]['overall']['success_score_iou'])
-                success_score_diou_list[i] = np.array(tracker_performance[repetition]['overall']['success_score_diou'])
-                success_score_giou_list[i] = np.array(tracker_performance[repetition]['overall']['success_score_giou'])
-                precision_score_list[i] = np.array(tracker_performance[repetition]['overall']['precision_score'])
-                norm_prec_score_list[i] = np.array(tracker_performance[repetition]['overall']['norm_prec_score'])
-                success_rate_iou_list[i] = np.array(tracker_performance[repetition]['overall']['success_rate_iou'])
-                success_rate_diou_list[i] = np.array(tracker_performance[repetition]['overall']['success_rate_diou'])
-                success_rate_giou_list[i] = np.array(tracker_performance[repetition]['overall']['success_rate_giou'])
-                speed_fps_list[i] = np.array(tracker_performance[repetition]['overall']['speed_fps'])
-
-            success_curve_iou = np.nanmean(success_curve_iou_list,axis=0)
-            success_curve_diou = np.nanmean(success_curve_diou_list,axis=0)
-            success_curve_giou = np.nanmean(success_curve_giou_list,axis=0)
-            precision_curve = np.nanmean(precision_curve_list,axis=0)
-            normalized_precision_curve = np.nanmean(normalized_precision_curve_list,axis=0)
-            success_score_iou = np.nanmean(success_score_iou_list,axis=0)
-            success_score_diou = np.nanmean(success_score_diou_list,axis=0)
-            success_score_giou = np.nanmean(success_score_giou_list,axis=0)
-            precision_score = np.nanmean(precision_score_list,axis=0)
-            norm_prec_score = np.nanmean(norm_prec_score_list,axis=0)
-            success_rate_iou = np.nanmean(success_rate_iou_list,axis=0)
-            success_rate_diou = np.nanmean(success_rate_diou_list,axis=0)
-            success_rate_giou = np.nanmean(success_rate_giou_list,axis=0)
-            speed_fps = np.nanmean(speed_fps_list,axis=0)
-            
-            performance[name]['overall'].update({
-                'success_curve_iou': success_curve_iou.tolist(),
-                'success_curve_diou': success_curve_diou.tolist(),
-                'success_curve_giou': success_curve_giou.tolist(),
-                'precision_curve': precision_curve.tolist(),
-                'normalized_precision_curve': normalized_precision_curve.tolist(),
-                'success_score_iou': success_score_iou,
-                'success_score_diou': success_score_diou,
-                'success_score_giou': success_score_giou,
-                'precision_score': precision_score,
-                'norm_prec_score':norm_prec_score,
-                'success_rate_iou': success_rate_iou,
-                'success_rate_diou': success_rate_diou,
-                'success_rate_giou': success_rate_giou,
-                'speed_fps': speed_fps
-            })
-
-            for s in range(len(self.dataset.seq_names)):
-                num = self.dataset.seq_names[s]
-                success_score_iou_list = np.zeros((self.repetition, ))
-                success_score_diou_list = np.zeros((self.repetition, ))
-                success_score_giou_list = np.zeros((self.repetition, ))
-                precision_score_list = np.zeros((self.repetition, ))
-                norm_prec_score_list = np.zeros((self.repetition, ))
-                success_rate_iou_list = np.zeros((self.repetition, ))
-                success_rate_diou_list = np.zeros((self.repetition, ))
-                success_rate_giou_list = np.zeros((self.repetition, ))
-                speed_fps_list = np.zeros((self.repetition, ))
-
-                for i in range(self.repetition):
-                    repetition = str(i+1)
-                    success_score_iou_list[i] = np.array(tracker_performance[repetition]['seq_wise'][num]['success_score_iou'])
-                    success_score_diou_list[i] = np.array(tracker_performance[repetition]['seq_wise'][num]['success_score_diou'])
-                    success_score_giou_list[i] = np.array(tracker_performance[repetition]['seq_wise'][num]['success_score_giou'])
-                    precision_score_list[i] = np.array(tracker_performance[repetition]['seq_wise'][num]['precision_score'])
-                    norm_prec_score_list[i] = np.array(tracker_performance[repetition]['seq_wise'][num]['norm_prec_score'])
-                    success_rate_iou_list[i] = np.array(tracker_performance[repetition]['seq_wise'][num]['success_rate_iou'])
-                    success_rate_diou_list[i] = np.array(tracker_performance[repetition]['seq_wise'][num]['success_rate_diou'])
-                    success_rate_giou_list[i] = np.array(tracker_performance[repetition]['seq_wise'][num]['success_rate_giou'])
-                    speed_fps_list[i] = np.array(tracker_performance[repetition]['seq_wise'][num]['speed_fps'])
-                
-                success_score_iou = np.nanmean(success_score_iou_list,axis=0)
-                success_score_diou = np.nanmean(success_score_diou_list,axis=0)
-                success_score_giou = np.nanmean(success_score_giou_list,axis=0)
-                precision_score = np.nanmean(precision_score_list,axis=0)
-                norm_prec_score = np.nanmean(norm_prec_score_list,axis=0)
-                success_rate_iou = np.nanmean(success_rate_iou_list,axis=0)
-                success_rate_diou = np.nanmean(success_rate_diou_list,axis=0)
-                success_rate_giou = np.nanmean(success_rate_giou_list,axis=0)
-                speed_fps = np.nanmean(speed_fps_list,axis=0)
-
-                performance[name]['seq_wise'].update({num:{
-                    'success_score_iou': success_score_iou,
-                    'success_score_diou': success_score_diou,
-                    'success_score_giou': success_score_giou,
-                    'precision_score': precision_score,
-                    'norm_prec_score':norm_prec_score,
-                    'success_rate_iou': success_rate_iou,
-                    'success_rate_diou': success_rate_diou,
-                    'success_rate_giou': success_rate_giou,
-                    'speed_fps': speed_fps
-                }})
-
-            with open(single_all_file, 'w') as f:
-                json.dump(performance[name], f, indent=4)
-
-        # save performance
-        report_file = os.path.join(report_dir, '{}_performance_all.json'.format(attribute_name))
-        with open(report_file, 'w') as f:
-            json.dump(performance, f, indent=4)
-
-        self.plot_curves_([report_file], tracker_names, attribute_name, 'all', eye_mode)
-
-        return performance
 
 
     def _calc_metrics(self, boxes, anno, bound):
@@ -652,19 +477,17 @@ class ExperimentVideoCube(object):
         report_file = os.path.join(report_dir, 'robust.json')
         with open(report_file, 'w') as f:
             json.dump(performance, f, indent=4)
+                  
 
-                    
-
-    def plot_curves_(self, report_files, tracker_names, attribute_name, rep, eye_mode):
-
+    def plot_curves_(self, report_files, tracker_names, attribute_name, rep):
+        """
+        Drow Plot
+        """
         assert isinstance(report_files, list), \
             'Expected "report_files" to be a list, ' \
             'but got %s instead' % type(report_files)
         
-        if eye_mode:
-            report_dir = os.path.join(self.report_dir, self.subset, 'eye')
-        else:
-            report_dir = os.path.join(self.report_dir, self.subset,  tracker_names[0])
+        report_dir = os.path.join(self.report_dir, self.subset,  tracker_names[0])
         if not os.path.exists(report_dir):
             os.makedirs(report_dir)
         
@@ -910,4 +733,12 @@ class ExperimentVideoCube(object):
 
     def sigmoid(self, x):
         return 1.0/(1+np.exp(-x))
-    
+
+
+    def eye_report(self, root_dir, tracker_names):
+        """
+        Calculate in eye tracking subset
+        """
+        attribute_name='normal'
+        report_dir = os.path.join(self.report_dir, 'eye')
+        performance = self.report(tracker_names, attribute_name)
