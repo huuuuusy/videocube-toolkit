@@ -92,6 +92,8 @@ class ExperimentVideoCube(object):
             # setting the path for saving tracking result
             record_file = os.path.join(tracker_result_dir, '%s_%s_%s.txt'%(record_name , seq_name , str(self.repetition)))
 
+            print(record_file)
+
             # setting the path for saving tracking result (restart position in R-OPE mechanism)
             init_positions_file = os.path.join(tracker_result_dir, 'init_%s_%s_%s.txt'%(record_name , seq_name , str(self.repetition)))
 

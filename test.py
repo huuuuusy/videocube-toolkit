@@ -7,9 +7,9 @@ from tracker.siamfc import TrackerSiamFC
 
 if __name__ == '__main__':
     # the path of VideoCube data folder
-    root_dir = "/mnt/first/hushiyu/SOT/VideoCube/data/"
+    root_dir = "/mnt/first/hushiyu/SOT/VideoCube/"
     # the path to save the experiment result
-    save_dir = "/mnt/first/hushiyu/SOT/VideoCube/VideoCube-result/"
+    save_dir = "/mnt/first/hushiyu/SOT/VideoCube/result/"
     # the subset of VideoCube, please select train/test/val/eye
     subset = 'val'
     repetitions = 1
@@ -31,7 +31,8 @@ if __name__ == '__main__':
     I. RUN TRACKER
     Note: 
     method in run function means the evaluation mechanism, you can select the original mode (set none) or the restart mode (set restart)
-    """
+    """ 
+    
     net_path = '/home/user1/projects/VIS/videocube-toolkit-official/pretrained/siamfc/model.pth'
     tracker = TrackerSiamFC(net_path=net_path)
 

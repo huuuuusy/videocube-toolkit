@@ -1,0 +1,833 @@
+#!/bin/bash
+
+mkdir 001
+mv frame_001.zip 001/
+cd 001/
+unzip frame_001.zip
+rm frame_001.zip
+cd ..
+
+mkdir 006
+mv frame_006_split.zip 006/
+mv frame_006_split.z01 006/
+cd 006/
+zip frame_006_split.zip -s=0 --out frame_006.zip
+unzip frame_006.zip
+rm frame_006.zip
+rm frame_006_split.zip
+rm frame_006_split.z01
+cd ..
+
+mkdir 007
+mv frame_007.zip 007/
+cd 007/
+unzip frame_007.zip
+rm frame_007.zip
+cd ..
+
+mkdir 012
+mv frame_012.zip 012/
+cd 012/
+unzip frame_012.zip
+rm frame_012.zip
+cd ..
+
+mkdir 022
+mv frame_022.zip 022/
+cd 022/
+unzip frame_022.zip
+rm frame_022.zip
+cd ..
+
+mkdir 027
+mv frame_027.zip 027/
+cd 027/
+unzip frame_027.zip
+rm frame_027.zip
+cd ..
+
+mkdir 036
+mv frame_036.zip 036/
+cd 036/
+unzip frame_036.zip
+rm frame_036.zip
+cd ..
+
+mkdir 038
+mv frame_038.zip 038/
+cd 038/
+unzip frame_038.zip
+rm frame_038.zip
+cd ..
+
+mkdir 040
+mv frame_040.zip 040/
+cd 040/
+unzip frame_040.zip
+rm frame_040.zip
+cd ..
+
+mkdir 045
+mv frame_045_split.zip 045/
+mv frame_045_split.z01 045/
+cd 045/
+zip frame_045_split.zip -s=0 --out frame_045.zip
+unzip frame_045.zip
+rm frame_045.zip
+rm frame_045_split.zip
+rm frame_045_split.z01
+cd ..
+
+mkdir 052
+mv frame_052.zip 052/
+cd 052/
+unzip frame_052.zip
+rm frame_052.zip
+cd ..
+
+mkdir 059
+mv frame_059.zip 059/
+cd 059/
+unzip frame_059.zip
+rm frame_059.zip
+cd ..
+
+mkdir 061
+mv frame_061.zip 061/
+cd 061/
+unzip frame_061.zip
+rm frame_061.zip
+cd ..
+
+mkdir 073
+mv frame_073.zip 073/
+cd 073/
+unzip frame_073.zip
+rm frame_073.zip
+cd ..
+
+mkdir 074
+mv frame_074.zip 074/
+cd 074/
+unzip frame_074.zip
+rm frame_074.zip
+cd ..
+
+mkdir 077
+mv frame_077.zip 077/
+cd 077/
+unzip frame_077.zip
+rm frame_077.zip
+cd ..
+
+mkdir 079
+mv frame_079_split.zip 079/
+mv frame_079_split.z01 079/
+cd 079/
+zip frame_079_split.zip -s=0 --out frame_079.zip
+unzip frame_079.zip
+rm frame_079.zip
+rm frame_079_split.zip
+rm frame_079_split.z01
+cd ..
+
+mkdir 083
+mv frame_083.zip 083/
+cd 083/
+unzip frame_083.zip
+rm frame_083.zip
+cd ..
+
+mkdir 087
+mv frame_087.zip 087/
+cd 087/
+unzip frame_087.zip
+rm frame_087.zip
+cd ..
+
+mkdir 089
+mv frame_089.zip 089/
+cd 089/
+unzip frame_089.zip
+rm frame_089.zip
+cd ..
+
+mkdir 092
+mv frame_092_split.zip 092/
+mv frame_092_split.z01 092/
+mv frame_092_split.z02 092/
+cd 092/
+zip frame_092_split.zip -s=0 --out frame_092.zip
+unzip frame_092.zip
+rm frame_092.zip
+rm frame_092_split.zip
+rm frame_092_split.z01
+rm frame_092_split.z02
+cd ..
+
+mkdir 093
+mv frame_093_split.zip 093/
+mv frame_093_split.z01 093/
+mv frame_093_split.z02 093/
+cd 093/
+zip frame_093_split.zip -s=0 --out frame_093.zip
+unzip frame_093.zip
+rm frame_093.zip
+rm frame_093_split.zip
+rm frame_093_split.z01
+rm frame_093_split.z02
+cd ..
+
+mkdir 096
+mv frame_096_split.zip 096/
+mv frame_096_split.z01 096/
+cd 096/
+zip frame_096_split.zip -s=0 --out frame_096.zip
+unzip frame_096.zip
+rm frame_096.zip
+rm frame_096_split.zip
+rm frame_096_split.z01
+cd ..
+
+mkdir 106
+mv frame_106_split.zip 106/
+mv frame_106_split.z01 106/
+mv frame_106_split.z02 106/
+cd 106/
+zip frame_106_split.zip -s=0 --out frame_106.zip
+unzip frame_106.zip
+rm frame_106.zip
+rm frame_106_split.zip
+rm frame_106_split.z01
+rm frame_106_split.z02
+cd ..
+
+mkdir 107
+mv frame_107.zip 107/
+cd 107/
+unzip frame_107.zip
+rm frame_107.zip
+cd ..
+
+mkdir 111
+mv frame_111.zip 111/
+cd 111/
+unzip frame_111.zip
+rm frame_111.zip
+cd ..
+
+mkdir 112
+mv frame_112.zip 112/
+cd 112/
+unzip frame_112.zip
+rm frame_112.zip
+cd ..
+
+mkdir 114
+mv frame_114.zip 114/
+cd 114/
+unzip frame_114.zip
+rm frame_114.zip
+cd ..
+
+mkdir 117
+mv frame_117.zip 117/
+cd 117/
+unzip frame_117.zip
+rm frame_117.zip
+cd ..
+
+mkdir 121
+mv frame_121.zip 121/
+cd 121/
+unzip frame_121.zip
+rm frame_121.zip
+cd ..
+
+mkdir 122
+mv frame_122.zip 122/
+cd 122/
+unzip frame_122.zip
+rm frame_122.zip
+cd ..
+
+mkdir 125
+mv frame_125_split.zip 125/
+mv frame_125_split.z01 125/
+cd 125/
+zip frame_125_split.zip -s=0 --out frame_125.zip
+unzip frame_125.zip
+rm frame_125.zip
+rm frame_125_split.zip
+rm frame_125_split.z01
+cd ..
+
+mkdir 143
+mv frame_143_split.zip 143/
+mv frame_143_split.z01 143/
+mv frame_143_split.z02 143/
+cd 143/
+zip frame_143_split.zip -s=0 --out frame_143.zip
+unzip frame_143.zip
+rm frame_143.zip
+rm frame_143_split.zip
+rm frame_143_split.z01
+rm frame_143_split.z02
+cd ..
+
+mkdir 148
+mv frame_148_split.zip 148/
+mv frame_148_split.z01 148/
+cd 148/
+zip frame_148_split.zip -s=0 --out frame_148.zip
+unzip frame_148.zip
+rm frame_148.zip
+rm frame_148_split.zip
+rm frame_148_split.z01
+cd ..
+
+mkdir 151
+mv frame_151.zip 151/
+cd 151/
+unzip frame_151.zip
+rm frame_151.zip
+cd ..
+
+mkdir 153
+mv frame_153.zip 153/
+cd 153/
+unzip frame_153.zip
+rm frame_153.zip
+cd ..
+
+mkdir 155
+mv frame_155.zip 155/
+cd 155/
+unzip frame_155.zip
+rm frame_155.zip
+cd ..
+
+mkdir 160
+mv frame_160.zip 160/
+cd 160/
+unzip frame_160.zip
+rm frame_160.zip
+cd ..
+
+mkdir 163
+mv frame_163_split.zip 163/
+mv frame_163_split.z01 163/
+cd 163/
+zip frame_163_split.zip -s=0 --out frame_163.zip
+unzip frame_163.zip
+rm frame_163.zip
+rm frame_163_split.zip
+rm frame_163_split.z01
+cd ..
+
+mkdir 173
+mv frame_173.zip 173/
+cd 173/
+unzip frame_173.zip
+rm frame_173.zip
+cd ..
+
+mkdir 176
+mv frame_176_split.zip 176/
+mv frame_176_split.z01 176/
+cd 176/
+zip frame_176_split.zip -s=0 --out frame_176.zip
+unzip frame_176.zip
+rm frame_176.zip
+rm frame_176_split.zip
+rm frame_176_split.z01
+cd ..
+
+mkdir 181
+mv frame_181_split.zip 181/
+mv frame_181_split.z01 181/
+cd 181/
+zip frame_181_split.zip -s=0 --out frame_181.zip
+unzip frame_181.zip
+rm frame_181.zip
+rm frame_181_split.zip
+rm frame_181_split.z01
+cd ..
+
+mkdir 183
+mv frame_183.zip 183/
+cd 183/
+unzip frame_183.zip
+rm frame_183.zip
+cd ..
+
+mkdir 196
+mv frame_196_split.zip 196/
+mv frame_196_split.z01 196/
+cd 196/
+zip frame_196_split.zip -s=0 --out frame_196.zip
+unzip frame_196.zip
+rm frame_196.zip
+rm frame_196_split.zip
+rm frame_196_split.z01
+cd ..
+
+mkdir 201
+mv frame_201_split.zip 201/
+mv frame_201_split.z01 201/
+cd 201/
+zip frame_201_split.zip -s=0 --out frame_201.zip
+unzip frame_201.zip
+rm frame_201.zip
+rm frame_201_split.zip
+rm frame_201_split.z01
+cd ..
+
+mkdir 212
+mv frame_212_split.zip 212/
+mv frame_212_split.z01 212/
+cd 212/
+zip frame_212_split.zip -s=0 --out frame_212.zip
+unzip frame_212.zip
+rm frame_212.zip
+rm frame_212_split.zip
+rm frame_212_split.z01
+cd ..
+
+mkdir 215
+mv frame_215.zip 215/
+cd 215/
+unzip frame_215.zip
+rm frame_215.zip
+cd ..
+
+mkdir 217
+mv frame_217_split.zip 217/
+mv frame_217_split.z01 217/
+mv frame_217_split.z02 217/
+mv frame_217_split.z03 217/
+mv frame_217_split.z04 217/
+mv frame_217_split.z05 217/
+cd 217/
+zip frame_217_split.zip -s=0 --out frame_217.zip
+unzip frame_217.zip
+rm frame_217.zip
+rm frame_217_split.zip
+rm frame_217_split.z01
+rm frame_217_split.z02
+rm frame_217_split.z03
+rm frame_217_split.z04
+rm frame_217_split.z05
+cd ..
+
+mkdir 224
+mv frame_224_split.zip 224/
+mv frame_224_split.z01 224/
+cd 224/
+zip frame_224_split.zip -s=0 --out frame_224.zip
+unzip frame_224.zip
+rm frame_224.zip
+rm frame_224_split.zip
+rm frame_224_split.z01
+cd ..
+
+mkdir 229
+mv frame_229_split.zip 229/
+mv frame_229_split.z01 229/
+cd 229/
+zip frame_229_split.zip -s=0 --out frame_229.zip
+unzip frame_229.zip
+rm frame_229.zip
+rm frame_229_split.zip
+rm frame_229_split.z01
+cd ..
+
+mkdir 230
+mv frame_230.zip 230/
+cd 230/
+unzip frame_230.zip
+rm frame_230.zip
+cd ..
+
+mkdir 234
+mv frame_234.zip 234/
+cd 234/
+unzip frame_234.zip
+rm frame_234.zip
+cd ..
+
+mkdir 255
+mv frame_255.zip 255/
+cd 255/
+unzip frame_255.zip
+rm frame_255.zip
+cd ..
+
+mkdir 256
+mv frame_256.zip 256/
+cd 256/
+unzip frame_256.zip
+rm frame_256.zip
+cd ..
+
+mkdir 261
+mv frame_261.zip 261/
+cd 261/
+unzip frame_261.zip
+rm frame_261.zip
+cd ..
+
+mkdir 268
+mv frame_268.zip 268/
+cd 268/
+unzip frame_268.zip
+rm frame_268.zip
+cd ..
+
+mkdir 270
+mv frame_270_split.zip 270/
+mv frame_270_split.z01 270/
+mv frame_270_split.z02 270/
+mv frame_270_split.z03 270/
+cd 270/
+zip frame_270_split.zip -s=0 --out frame_270.zip
+unzip frame_270.zip
+rm frame_270.zip
+rm frame_270_split.zip
+rm frame_270_split.z01
+rm frame_270_split.z02
+rm frame_270_split.z03
+cd ..
+
+mkdir 275
+mv frame_275.zip 275/
+cd 275/
+unzip frame_275.zip
+rm frame_275.zip
+cd ..
+
+mkdir 277
+mv frame_277.zip 277/
+cd 277/
+unzip frame_277.zip
+rm frame_277.zip
+cd ..
+
+mkdir 286
+mv frame_286_split.zip 286/
+mv frame_286_split.z01 286/
+cd 286/
+zip frame_286_split.zip -s=0 --out frame_286.zip
+unzip frame_286.zip
+rm frame_286.zip
+rm frame_286_split.zip
+rm frame_286_split.z01
+cd ..
+
+mkdir 288
+mv frame_288.zip 288/
+cd 288/
+unzip frame_288.zip
+rm frame_288.zip
+cd ..
+
+mkdir 296
+mv frame_296.zip 296/
+cd 296/
+unzip frame_296.zip
+rm frame_296.zip
+cd ..
+
+mkdir 300
+mv frame_300.zip 300/
+cd 300/
+unzip frame_300.zip
+rm frame_300.zip
+cd ..
+
+mkdir 303
+mv frame_303.zip 303/
+cd 303/
+unzip frame_303.zip
+rm frame_303.zip
+cd ..
+
+mkdir 311
+mv frame_311.zip 311/
+cd 311/
+unzip frame_311.zip
+rm frame_311.zip
+cd ..
+
+mkdir 319
+mv frame_319.zip 319/
+cd 319/
+unzip frame_319.zip
+rm frame_319.zip
+cd ..
+
+mkdir 322
+mv frame_322.zip 322/
+cd 322/
+unzip frame_322.zip
+rm frame_322.zip
+cd ..
+
+mkdir 333
+mv frame_333.zip 333/
+cd 333/
+unzip frame_333.zip
+rm frame_333.zip
+cd ..
+
+mkdir 337
+mv frame_337.zip 337/
+cd 337/
+unzip frame_337.zip
+rm frame_337.zip
+cd ..
+
+mkdir 351
+mv frame_351.zip 351/
+cd 351/
+unzip frame_351.zip
+rm frame_351.zip
+cd ..
+
+mkdir 356
+mv frame_356.zip 356/
+cd 356/
+unzip frame_356.zip
+rm frame_356.zip
+cd ..
+
+mkdir 357
+mv frame_357.zip 357/
+cd 357/
+unzip frame_357.zip
+rm frame_357.zip
+cd ..
+
+mkdir 358
+mv frame_358_split.zip 358/
+mv frame_358_split.z01 358/
+cd 358/
+zip frame_358_split.zip -s=0 --out frame_358.zip
+unzip frame_358.zip
+rm frame_358.zip
+rm frame_358_split.zip
+rm frame_358_split.z01
+cd ..
+
+mkdir 359
+mv frame_359_split.zip 359/
+mv frame_359_split.z01 359/
+mv frame_359_split.z02 359/
+cd 359/
+zip frame_359_split.zip -s=0 --out frame_359.zip
+unzip frame_359.zip
+rm frame_359.zip
+rm frame_359_split.zip
+rm frame_359_split.z01
+rm frame_359_split.z02
+cd ..
+
+mkdir 366
+mv frame_366_split.zip 366/
+mv frame_366_split.z01 366/
+mv frame_366_split.z02 366/
+cd 366/
+zip frame_366_split.zip -s=0 --out frame_366.zip
+unzip frame_366.zip
+rm frame_366.zip
+rm frame_366_split.zip
+rm frame_366_split.z01
+rm frame_366_split.z02
+cd ..
+
+mkdir 367
+mv frame_367.zip 367/
+cd 367/
+unzip frame_367.zip
+rm frame_367.zip
+cd ..
+
+mkdir 383
+mv frame_383_split.zip 383/
+mv frame_383_split.z01 383/
+cd 383/
+zip frame_383_split.zip -s=0 --out frame_383.zip
+unzip frame_383.zip
+rm frame_383.zip
+rm frame_383_split.zip
+rm frame_383_split.z01
+cd ..
+
+mkdir 391
+mv frame_391.zip 391/
+cd 391/
+unzip frame_391.zip
+rm frame_391.zip
+cd ..
+
+mkdir 397
+mv frame_397.zip 397/
+cd 397/
+unzip frame_397.zip
+rm frame_397.zip
+cd ..
+
+mkdir 404
+mv frame_404.zip 404/
+cd 404/
+unzip frame_404.zip
+rm frame_404.zip
+cd ..
+
+mkdir 406
+mv frame_406.zip 406/
+cd 406/
+unzip frame_406.zip
+rm frame_406.zip
+cd ..
+
+mkdir 408
+mv frame_408.zip 408/
+cd 408/
+unzip frame_408.zip
+rm frame_408.zip
+cd ..
+
+mkdir 410
+mv frame_410.zip 410/
+cd 410/
+unzip frame_410.zip
+rm frame_410.zip
+cd ..
+
+mkdir 418
+mv frame_418.zip 418/
+cd 418/
+unzip frame_418.zip
+rm frame_418.zip
+cd ..
+
+mkdir 427
+mv frame_427.zip 427/
+cd 427/
+unzip frame_427.zip
+rm frame_427.zip
+cd ..
+
+mkdir 437
+mv frame_437.zip 437/
+cd 437/
+unzip frame_437.zip
+rm frame_437.zip
+cd ..
+
+mkdir 447
+mv frame_447.zip 447/
+cd 447/
+unzip frame_447.zip
+rm frame_447.zip
+cd ..
+
+mkdir 449
+mv frame_449.zip 449/
+cd 449/
+unzip frame_449.zip
+rm frame_449.zip
+cd ..
+
+mkdir 453
+mv frame_453.zip 453/
+cd 453/
+unzip frame_453.zip
+rm frame_453.zip
+cd ..
+
+mkdir 459
+mv frame_459_split.zip 459/
+mv frame_459_split.z01 459/
+cd 459/
+zip frame_459_split.zip -s=0 --out frame_459.zip
+unzip frame_459.zip
+rm frame_459.zip
+rm frame_459_split.zip
+rm frame_459_split.z01
+cd ..
+
+mkdir 460
+mv frame_460.zip 460/
+cd 460/
+unzip frame_460.zip
+rm frame_460.zip
+cd ..
+
+mkdir 461
+mv frame_461_split.zip 461/
+mv frame_461_split.z01 461/
+cd 461/
+zip frame_461_split.zip -s=0 --out frame_461.zip
+unzip frame_461.zip
+rm frame_461.zip
+rm frame_461_split.zip
+rm frame_461_split.z01
+cd ..
+
+mkdir 465
+mv frame_465.zip 465/
+cd 465/
+unzip frame_465.zip
+rm frame_465.zip
+cd ..
+
+mkdir 469
+mv frame_469.zip 469/
+cd 469/
+unzip frame_469.zip
+rm frame_469.zip
+cd ..
+
+mkdir 470
+mv frame_470.zip 470/
+cd 470/
+unzip frame_470.zip
+rm frame_470.zip
+cd ..
+
+mkdir 472
+mv frame_472.zip 472/
+cd 472/
+unzip frame_472.zip
+rm frame_472.zip
+cd ..
+
+mkdir 481
+mv frame_481.zip 481/
+cd 481/
+unzip frame_481.zip
+rm frame_481.zip
+cd ..
+
+mkdir 496
+mv frame_496.zip 496/
+cd 496/
+unzip frame_496.zip
+rm frame_496.zip
+cd ..
+
+mkdir 498
+mv frame_498.zip 498/
+cd 498/
+unzip frame_498.zip
+rm frame_498.zip
+cd ..
+
+mkdir 500
+mv frame_500.zip 500/
+cd 500/
+unzip frame_500.zip
+rm frame_500.zip
+cd ..

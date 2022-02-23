@@ -6,6 +6,7 @@ import time
 import cv2 as cv
 
 from ..utils.metrics import iou
+import concurrent.futures
 
 class Tracker(object):
 
@@ -27,8 +28,6 @@ class Tracker(object):
         boxes[0] = box 
         times = np.zeros(frame_num) # save time
 
-        print(img_files[0])
-
         fail_count = 0 # fail_count records the failures in R-OPE mechanism
 
         init_positions = [] # save the restart locations
@@ -36,6 +35,9 @@ class Tracker(object):
             display_name = 'Display: ' + seq_name
             cv.namedWindow(display_name, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO)
             cv.resizeWindow(display_name, 960, 720)
+        
+        with concurrent.futures.ProcessPoolExecutor() as executor: 
+            executor.map(cv.imread, img_files)
 
         for f, img_file in enumerate(img_files):
 
