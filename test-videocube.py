@@ -7,9 +7,9 @@ from tracker.siamfc import TrackerSiamFC
 
 if __name__ == '__main__':
     # the path of VideoCube data folder
-    root_dir = "/mnt/first/hushiyu/VIS/data/"
+    root_dir = "/mnt/first/hushiyu/SOT/VideoCube/data/"
     # the path to save the experiment result
-    save_dir = "/mnt/first/hushiyu/VIS/VIS-result/"
+    save_dir = "/mnt/first/hushiyu/SOT/VideoCube/VideoCube-result/"
     # the subset of VideoCube, please select train/test/val/eye
     subset = 'val'
     repetitions = 1
