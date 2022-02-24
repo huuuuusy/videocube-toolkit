@@ -26,11 +26,6 @@ class VideoCube(object):
             self.seq_dirs = [os.path.join(root_dir, 'data', subset, s,'frame_{}'.format(s)) for s in self.seq_names]
             self.anno_files = [os.path.join(root_dir,'attribute', 'groundtruth','{}.txt'.format(s)) for s in self.seq_names]
             self.restart_files = [os.path.join(root_dir,'attribute', 'restart','{}.txt'.format(s)) for s in self.seq_names]
-
-        elif subset == 'eye':
-            self.seq_dirs = [os.path.join(root_dir, 'data', 'test', s,'frame_{}'.format(s)) for s in self.seq_names]
-            self.anno_files = [os.path.join(root_dir,'attribute', 'groundtruth','{}.txt'.format(s)) for s in self.seq_names]
-            self.restart_files = [os.path.join(root_dir,'attribute', 'restart','{}.txt'.format(s)) for s in self.seq_names]
     
     def __getitem__(self, index):
         r"""        
