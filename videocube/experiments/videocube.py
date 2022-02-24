@@ -35,6 +35,7 @@ class ExperimentVideoCube(object):
         self.root_dir = root_dir
         self.subset = subset
         self.dataset = VideoCube(root_dir, subset)
+
         self.result_dir = os.path.join(save_dir, 'results') 
         self.report_dir = os.path.join(save_dir, 'reports') 
         self.time_dir = os.path.join(save_dir, 'time')
@@ -64,21 +65,22 @@ class ExperimentVideoCube(object):
 
         for s, (img_files, anno, restart_flag) in enumerate(self.dataset):
             seq_name = self.dataset.seq_names[s] 
-            print('--Sequence %d/%d: %s' % (s + 1, len(self.dataset), seq_name))
+            print('--Sequence {}/{}: {}'.format(s+1,len(self.dataset), seq_name))
 
-            print('  Repetition: %d'%self.repetition)
+            print('  Repetition: {}'.format(self.repetition))
             if method == None:
                 # tracking in OPE mechanism
                 record_name = tracker.name
             else:
                 # tracking in R-OPE mechanism
-                record_name = tracker.name + '_' + method
+                record_name = '{}_{}'.format(tracker.name, method)
 
             makedir(os.path.join(self.result_dir, record_name))
             makedir(os.path.join(self.time_dir, record_name))
 
             tracker_result_dir = os.path.join(self.result_dir, record_name, self.subset)
             tracker_time_dir = os.path.join(self.time_dir, record_name, self.subset)
+
             makedir(tracker_result_dir)                
             makedir(tracker_time_dir)
 
@@ -90,18 +92,16 @@ class ExperimentVideoCube(object):
             makedir(seq_result_dir)
 
             # setting the path for saving tracking result
-            record_file = os.path.join(tracker_result_dir, '%s_%s_%s.txt'%(record_name , seq_name , str(self.repetition)))
-
-            print(record_file)
+            record_file = os.path.join(tracker_result_dir, '{}_{}_{}.txt'.format(record_name , seq_name , str(self.repetition)))
 
             # setting the path for saving tracking result (restart position in R-OPE mechanism)
-            init_positions_file = os.path.join(tracker_result_dir, 'init_%s_%s_%s.txt'%(record_name , seq_name , str(self.repetition)))
+            init_positions_file = os.path.join(tracker_result_dir, 'init_{}_{}_{}.txt'.format(record_name, seq_name, self.repetition))
 
             # setting the path for saving tracking time 
-            time_file = os.path.join(tracker_time_dir, '%s_%s_%s.txt'%(record_name , seq_name , str(self.repetition)))
+            time_file = os.path.join(tracker_time_dir, '{}_{}_{}.txt'.format(record_name, seq_name, self.repetition))
             
             if os.path.exists(record_file):
-                print('  Found results, skipping ', seq_name)
+                print('  Found results in {}'.format(record_file))
                 continue
             
             # tracking loop
@@ -138,7 +138,7 @@ class ExperimentVideoCube(object):
         performance = {}
         for name in tracker_names:
 
-            single_report_file = os.path.join(subset_analysis_dir, '%s_%s_%s_%s.json'%(name, self.subset, attribute_name, str(self.repetition)))
+            single_report_file = os.path.join(subset_analysis_dir, '{}_{}_{}_{}.json'.format(name, self.subset, attribute_name, str(self.repetition)))
             
             if os.path.exists(single_report_file):
                 f = open(single_report_file,'r',encoding='utf-8')
@@ -175,19 +175,19 @@ class ExperimentVideoCube(object):
                 # get the information of selected video
                 img_files, anno, _ = self.dataset[s]
 
-                print('repetition %s: Evaluate tracker %s in video num %s with %s attribute '%(self.repetition, name, num, attribute_name))
+                print('repetition {}: Evaluate tracker {} in video num {} with {} attribute '.format(self.repetition, name, num, attribute_name))
                 
-                # read present info
-                present_path = os.path.join(self.root_dir, self.subset, num,'present_%s.txt'%num)
-                present = pd.read_csv(present_path,header=None,names=['present'])
+                # read absent info
+                absent_path = os.path.join(self.root_dir, 'attribute', 'absent','{}.txt'.format(num))
+                absent = pd.read_csv(absent_path,header=None,names=['absent'])
 
                 # read shotcut info
-                shotcut_path = os.path.join(self.root_dir, self.subset, num,'shotcut_%s.txt'%num)
+                shotcut_path = os.path.join(self.root_dir, 'attribute', 'shotcut','{}.txt'.format(num))
                 shotcut = pd.read_csv(shotcut_path,header=None,names=['shotcut'])
 
                 # read attribute info
                 if attribute_name != 'normal':
-                    attribute_path = os.path.join(self.root_dir, self.subset, num,'%s_%s.txt'%(attribute_name, num))
+                    attribute_path = os.path.join(self.root_dir, 'attribute', attribute_name,'{}.txt'.format(num))
                     attribute = pd.read_csv(attribute_path,header=None,names=[attribute_name])
                 
                 # frame resolution
@@ -223,18 +223,18 @@ class ExperimentVideoCube(object):
                 flags = pd.DataFrame(flags, columns = ['flags'])
 
                 if attribute_name != 'normal':
-                    data = pd.concat([seq_ious,seq_dious, seq_gious,seq_center_errors,seq_norm_center_errors,flags, present,shotcut,attribute],axis=1) 
+                    data = pd.concat([seq_ious,seq_dious, seq_gious,seq_center_errors,seq_norm_center_errors,flags, absent,shotcut,attribute],axis=1) 
                 else:
-                    data = pd.concat([seq_ious,seq_dious, seq_gious,seq_center_errors,seq_norm_center_errors,flags, present,shotcut],axis=1) 
+                    data = pd.concat([seq_ious,seq_dious, seq_gious,seq_center_errors,seq_norm_center_errors,flags, absent,shotcut],axis=1) 
                 
                 # Frames without target and transition frames are not included in the evaluation
-                data = data[data.apply(lambda x: x['present']==1 and x['shotcut']==0, axis=1)]
+                data = data[data.apply(lambda x: x['absent']== 0 and x['shotcut']==0, axis=1)]
 
                 if attribute_name != 'normal':
                     # Pick frames with difficult attributes
                     data = self.select_attribute_frames(data, attribute_name)  
                 
-                data = data.drop(labels=['present','shotcut'],axis = 1)
+                data = data.drop(labels=['absent','shotcut'],axis = 1)
 
                 seq_ious = data['seq_ious']
                 seq_dious = data['seq_dious']
@@ -316,7 +316,7 @@ class ExperimentVideoCube(object):
                 json.dump(performance[name], f, indent=4)
 
         # save performance
-        report_file = os.path.join(report_dir, '{}_performance_{}.json'.format(attribute_name, str(self.repetition)))
+        report_file = os.path.join(report_dir, '{}_performance_{}.json'.format(attribute_name, self.repetition))
         with open(report_file, 'w') as f:
             json.dump(performance, f, indent=4)
 
@@ -419,7 +419,7 @@ class ExperimentVideoCube(object):
         for name in tracker_names:
             print('Evaluating Robust', name)
 
-            single_report_file = os.path.join(subset_analysis_dir, '%s_%s_robust_%s.json'%(name, self.subset, str(self.repetition)))
+            single_report_file = os.path.join(subset_analysis_dir, '{}_{}_robust_{}.json'.format(name, self.subset, str(self.repetition)))
 
             ious = {}
             times = {}
@@ -444,14 +444,14 @@ class ExperimentVideoCube(object):
         
                 img_files, anno, restart_flag = self.dataset[s]
                
-                print('Evaluate ' + ' ' + name + ' ' + num)
+                print('Evaluate {} in {}'.format(name, num))
                 seq_name = self.dataset.seq_names[s]
 
-                corrcoef_path = os.path.join(self.root_dir, self.subset, num,'corrcoef_%s.txt'%num)
+                corrcoef_path = os.path.join(self.root_dir, 'attribute', 'corrcoef','{}.txt'.format(num))
                 corrcoef = pd.read_csv(corrcoef_path,header=None,names=['corrcoef'])
                 corrcoef_mean = np.nanmean(corrcoef)
 
-                restart_path = os.path.join(self.root_dir, self.subset, num,'restart_%s.txt'%num)
+                restart_path = os.path.join(self.root_dir, 'attribute', 'restart','{}.txt'.format(num))
                 restart = len(open(restart_path,'r').readlines()) if os.path.getsize(restart_path) != 0 else 1
 
                 init_path = os.path.join(self.result_dir, name, self.subset, 'init_{}_{}_{}.txt'.format(name, num, self.repetition))
@@ -499,30 +499,30 @@ class ExperimentVideoCube(object):
                 performance.update(json.load(f))
         if rep == 'all':
             if attribute_name is not None:
-                succ_file = os.path.join(report_dir, attribute_name+'_'+'success_plot_iou_all.png')
-                succ_dfile = os.path.join(report_dir, attribute_name+'_'+'success_plot_diou_all.png')
-                succ_gfile = os.path.join(report_dir, attribute_name+'_'+'success_plot_giou_all.png')
-                prec_file = os.path.join(report_dir, attribute_name+'_'+'precision_plot_all.png')
-                norm_prec_file = os.path.join(report_dir, attribute_name+'_'+'norm_precision_plot_all.png')
+                succ_file = os.path.join(report_dir, '{}_success_plot_iou_all.png'.format(attribute_name))
+                succ_dfile = os.path.join(report_dir, '{}_success_plot_diou_all.png'.format(attribute_name))
+                succ_gfile = os.path.join(report_dir, '{}_success_plot_giou_all.png'.format(attribute_name))
+                prec_file = os.path.join(report_dir, '{}_precision_plot_all.png'.format(attribute_name))
+                norm_prec_file = os.path.join(report_dir, '{}_norm_precision_plot_all.png'.format(attribute_name))
             else:
-                succ_file = os.path.join(report_dir, 'overall_'+'success_plot_iou_all.png')
-                succ_dfile = os.path.join(report_dir, 'overall_'+'success_plot_diou_all.png')
-                succ_gfile = os.path.join(report_dir, 'overall_'+'success_plot_giou_all.png')
-                prec_file = os.path.join(report_dir, 'overall_'+'precision_plot_all.png')
-                norm_prec_file = os.path.join(report_dir, 'overall_'+'norm_precision_plot_all.png')
+                succ_file = os.path.join(report_dir, 'overall_success_plot_iou_all.png')
+                succ_dfile = os.path.join(report_dir, 'overall_success_plot_diou_all.png')
+                succ_gfile = os.path.join(report_dir, 'overall_success_plot_giou_all.png')
+                prec_file = os.path.join(report_dir, 'overall_precision_plot_all.png')
+                norm_prec_file = os.path.join(report_dir, 'overall_norm_precision_plot_all.png')
         else:
             if attribute_name is not None:
-                succ_file = os.path.join(report_dir, attribute_name+'_'+'success_plot_iou_'+str(rep)+'.png')
-                succ_dfile = os.path.join(report_dir, attribute_name+'_'+'success_plot_diou_'+str(rep)+'.png')
-                succ_gfile = os.path.join(report_dir, attribute_name+'_'+'success_plot_giou_'+str(rep)+'.png')
-                prec_file = os.path.join(report_dir, attribute_name+'_'+'precision_plot_'+str(rep)+'.png')
-                norm_prec_file = os.path.join(report_dir, attribute_name+'_'+'norm_precision_plot_'+str(rep)+'.png')
+                succ_file = os.path.join(report_dir, '{}_success_plot_iou_{}.png'.format(attribute_name,rep))
+                succ_dfile = os.path.join(report_dir, '{}_success_plot_diou_{}.png'.format(attribute_name,rep))
+                succ_gfile = os.path.join(report_dir,'{}_success_plot_giou_{}.png'.format(attribute_name,rep))
+                prec_file = os.path.join(report_dir, '{}_precision_plot_{}.png'.format(attribute_name,rep))
+                norm_prec_file = os.path.join(report_dir,'{}_norm_precision_plot_{}.png'.format(attribute_name,rep))
             else:
-                succ_file = os.path.join(report_dir, 'overall_'+'success_plot_iou_'+str(rep)+'.png')
-                succ_dfile = os.path.join(report_dir, 'overall_'+'success_plot_diou_'+str(rep)+'.png')
-                succ_gfile = os.path.join(report_dir, 'overall_'+'success_plot_giou_'+str(rep)+'.png')
-                prec_file = os.path.join(report_dir, 'overall_'+'precision_plot_'+str(rep)+'.png')
-                norm_prec_file = os.path.join(report_dir, 'overall_'+'norm_precision_plot_'+str(rep)+'.png')
+                succ_file = os.path.join(report_dir, 'overall_success_plot_iou_{}.png'.format(rep))
+                succ_dfile = os.path.join(report_dir, 'overall_success_plot_diou_{}.png'.format(rep))
+                succ_gfile = os.path.join(report_dir, 'overall_success_plot_giou_{}.png'.format(rep))
+                prec_file = os.path.join(report_dir, 'overall_precision_plot_{}.png'.format(rep))
+                norm_prec_file = os.path.join(report_dir, 'overall_norm_precision_plot_{}.png'.format(rep))
         
         
         key = 'overall'

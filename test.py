@@ -3,13 +3,16 @@ from __future__ import absolute_import
 from videocube.experiments import *
 
 from tracker.siamfc import TrackerSiamFC
+import os
 
 
 if __name__ == '__main__':
+    os.environ["CUDA_VISIBLE_DEVICES"] = '3'
     # the path of VideoCube data folder
     root_dir = "/mnt/first/hushiyu/SOT/VideoCube/"
+    # root_dir = "/mnt/second/hushiyu/"
     # the path to save the experiment result
-    save_dir = "/mnt/first/hushiyu/SOT/VideoCube/result/"
+    save_dir = os.path.join(root_dir,'result')
     # the subset of VideoCube, please select train/test/val/eye
     subset = 'val'
     repetitions = 1
@@ -36,9 +39,9 @@ if __name__ == '__main__':
     net_path = '/home/user1/projects/VIS/videocube-toolkit-official/pretrained/siamfc/model.pth'
     tracker = TrackerSiamFC(net_path=net_path)
 
-    for repetition in range(repetitions):
-        experiment = ExperimentVideoCube(root_dir, save_dir, subset, repetition+1)
-        experiment.run(tracker, visualize=False, save_img=False, method='restart')
+    # for repetition in range(repetitions):
+    #     experiment = ExperimentVideoCube(root_dir, save_dir, subset, repetition+1)
+    #     experiment.run(tracker, visualize=False, save_img=False, method='restart')
 
 
     """
@@ -51,13 +54,13 @@ if __name__ == '__main__':
     """evaluation in OPE"""
     for repetition in range(repetitions):
         experiment = ExperimentVideoCube(root_dir, save_dir, subset, repetition+1)
-        experiment.report(tracker_names, attribute_name='normal', eye_mode=False)
+        experiment.report(tracker_names, attribute_name='normal')
 
     """evaluation in R-OPE"""
     tracker_names = ['SiamFC_restart']
     for repetition in range(repetitions):
         experiment = ExperimentVideoCube(root_dir, save_dir, subset, repetition+1)
-        experiment.report(tracker_names, attribute_name='normal', eye_mode=False)
+        experiment.report(tracker_names, attribute_name='normal')
         experiment.report_robust(root_dir, tracker_names)
 
     """evaluation in eye tracking subset"""

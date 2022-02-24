@@ -20,17 +20,17 @@ class VideoCube(object):
         self.root_dir = root_dir
         self.subset = subset
         
-        self.seq_names = ['%03d'%num for num in np.loadtxt(os.path.join(root_dir, '%s_list.txt'%subset))]
+        self.seq_names = ['%03d'%num for num in np.loadtxt(os.path.join(root_dir, 'data', '{}_list.txt'.format(subset)))]
         
         if subset in ['train','val','test']:
-            self.seq_dirs = [os.path.join(root_dir, subset, s,'frame_'+s) for s in self.seq_names]
-            self.anno_files = [os.path.join(root_dir, subset, s,'result_%s.txt'%s) for s in self.seq_names]
-            self.restart_files = [os.path.join(root_dir, subset, s,'restart_%s.txt'%s) for s in self.seq_names]
+            self.seq_dirs = [os.path.join(root_dir, 'data', subset, s,'frame_{}'.format(s)) for s in self.seq_names]
+            self.anno_files = [os.path.join(root_dir,'attribute', 'groundtruth','{}.txt'.format(s)) for s in self.seq_names]
+            self.restart_files = [os.path.join(root_dir,'attribute', 'restart','{}.txt'.format(s)) for s in self.seq_names]
+
         elif subset == 'eye':
-            self.seq_dirs = [os.path.join(root_dir, 'test', s,'frame_'+s) for s in self.seq_names]
-            self.anno_files = [os.path.join(root_dir, 'test', s,'result_%s.txt'%s) for s in self.seq_names]
-            self.restart_files = [os.path.join(root_dir, 'test', s,'restart_%s.txt'%s) for s in self.seq_names]
-    
+            self.seq_dirs = [os.path.join(root_dir, 'data', 'test', s,'frame_{}'.format(s)) for s in self.seq_names]
+            self.anno_files = [os.path.join(root_dir,'attribute', 'groundtruth','{}.txt'.format(s)) for s in self.seq_names]
+            self.restart_files = [os.path.join(root_dir,'attribute', 'restart','{}.txt'.format(s)) for s in self.seq_names]
     
     def __getitem__(self, index):
         r"""        
