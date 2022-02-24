@@ -61,11 +61,5 @@ if __name__ == '__main__':
     for repetition in range(repetitions):
         experiment = ExperimentVideoCube(root_dir, save_dir, subset, repetition+1)
         experiment.report(tracker_names, attribute_name='normal')
-        experiment.report_robust(root_dir, tracker_names)
+        experiment.report_robust(tracker_names)
 
-    """evaluation in eye tracking subset"""
-    tracker_names = ['SiamFC']
-    subset = 'eye'
-    for repetition in range(repetitions):
-        experiment = ExperimentVideoCube(root_dir, save_dir, subset,repetition+1)
-        experiment.eye_report(root_dir,tracker_names)

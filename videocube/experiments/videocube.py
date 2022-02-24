@@ -10,12 +10,10 @@ import matplotlib
 
 from ..datasets import VideoCube
 from ..utils.metrics import center_error,normalized_center_error, iou, diou, giou
-from ..utils.ioutils import compress
 from ..utils.help import makedir
 import cv2 as cv
 import pandas as pd
-import seaborn as sns
-from collections import defaultdict
+
 
 class ExperimentVideoCube(object):
     r"""Experiment pipeline and evaluation toolkit for VideoCube dataset.
@@ -403,7 +401,7 @@ class ExperimentVideoCube(object):
         return succ_curve, succ_dcurve, succ_gcurve, prec_curve, norm_prec_curve
 
 
-    def report_robust(self, root_dir, tracker_names):
+    def report_robust(self,tracker_names):
         """
         robust score under R-OPE
         """
@@ -421,10 +419,6 @@ class ExperimentVideoCube(object):
 
             single_report_file = os.path.join(subset_analysis_dir, '{}_{}_robust_{}.json'.format(name, self.subset, str(self.repetition)))
 
-            ious = {}
-            times = {}
-            center_errors = {}
-
             if os.path.exists(single_report_file):
                 f = open(single_report_file,'r',encoding='utf-8')
                 single_performance = json.load(f)            
@@ -441,8 +435,6 @@ class ExperimentVideoCube(object):
 
             for s in range(len(self.dataset.seq_names)):
                 num = self.dataset.seq_names[s]
-        
-                img_files, anno, restart_flag = self.dataset[s]
                
                 print('Evaluate {} in {}'.format(name, num))
                 seq_name = self.dataset.seq_names[s]
@@ -735,12 +727,3 @@ class ExperimentVideoCube(object):
 
     def sigmoid(self, x):
         return 1.0/(1+np.exp(-x))
-
-
-    def eye_report(self, root_dir, tracker_names):
-        """
-        Calculate in eye tracking subset
-        """
-        attribute_name='normal'
-        report_dir = os.path.join(self.report_dir, 'eye')
-        performance = self.report(tracker_names, attribute_name)

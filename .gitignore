@@ -13,3 +13,4 @@ dist/
 !.gitignore
 dev-videocube/
 dev-test.py
+organize-attribute.py
