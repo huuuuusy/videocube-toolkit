@@ -1,7 +1,7 @@
 # VideoCube Python Toolkit
 
 > UPDATE:<br>
-> [2022.03.03] Update the toolkit installation, dataset download instructions and a concise example. Now the basic function of this toolkit is finished. <br>
+> [2022.03.03] Update the toolkit installation, dataset download instructions and a concise example. Now the basic function of this toolkit has been finished. <br>
 
 This repository contains the official python toolkit for running experiments and evaluate performance on [VideoCube](http://videocube.aitestunion.com/) benchmark. The code is written in pure python and is compile-free.
 
@@ -26,14 +26,16 @@ doi={10.1109/TPAMI.2022.3153312}}
 
 ## Table of Contents
 
-* [Toolkit Installation](#toolkit-installation)
-* [Dataset Download](#dataset-download)
-* [A Concise Example](#a-concise-example)
-  * [How to Define a Tracker?](#how-to-define-a-tracker)
-  * [How to Run Experiments on VideoCube?](#how-to-run-experiments-on-videocube)
-  * [How to Evaluate Performance?](#how-to-evaluate-performance)
-* [Issues](#issues)
-* [Contributors](#contributors)
+- [VideoCube Python Toolkit](#videocube-python-toolkit)
+  - [Table of Contents](#table-of-contents)
+    - [Toolkit Installation](#toolkit-installation)
+    - [Dataset Download](#dataset-download)
+    - [A Concise Example](#a-concise-example)
+      - [How to Define a Tracker?](#how-to-define-a-tracker)
+      - [How to Run Experiments on VideoCube?](#how-to-run-experiments-on-videocube)
+      - [How to Evaluate Performance?](#how-to-evaluate-performance)
+    - [Issues](#issues)
+    - [Contributors](#contributors)
 
 ### Toolkit Installation
 
@@ -166,7 +168,7 @@ experiment.run(
 For evaluation in OPE mechanism, please use the `report` method of `ExperimentVideoCube` for this purpose:
 
 ```Python
-# ... run experiments on GOT-10k ...
+# ... run experiments on VideoCube ...
 
 # report tracking performance
 experiment.report([tracker.name],attribute_name)
@@ -175,7 +177,7 @@ experiment.report([tracker.name],attribute_name)
 For evaluation in R-OPE mechanism, please use the `report` and `report_robust` method of `ExperimentVideoCube` for this purpose:
 
 ```Python
-# ... run experiments on GOT-10k ...
+# ... run experiments on VideoCube ...
 
 # report tracking performance
 experiment.report([tracker.name],attribute_name)
