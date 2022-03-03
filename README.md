@@ -1,7 +1,7 @@
 # VideoCube Python Toolkit
 
 > UPDATE:<br>
-> [2022.03.03] Update the toolkit installation and dataset download instructions.<br>
+> [2022.03.03] Update the toolkit installation, dataset download instructions and a concise example. Now the basic function of this toolkit is finished. <br>
 
 This repository contains the official python toolkit for running experiments and evaluate performance on [VideoCube](http://videocube.aitestunion.com/) benchmark. The code is written in pure python and is compile-free.
 
@@ -28,7 +28,10 @@ doi={10.1109/TPAMI.2022.3153312}}
 
 * [Toolkit Installation](#toolkit-installation)
 * [Dataset Download](#dataset-download)
-* [A Concise Example](#a-concise-example) (Coming soon)
+* [A Concise Example](#a-concise-example)
+  * [How to Define a Tracker?](#how-to-define-a-tracker)
+  * [How to Run Experiments on VideoCube?](#how-to-run-experiments-on-videocube)
+  * [How to Evaluate Performance?](#how-to-evaluate-performance)
 * [Issues](#issues)
 * [Contributors](#contributors)
 
@@ -78,7 +81,7 @@ The dataset download and file organization process is as follows：
 |  |-- 493/
 ```
 
-- Unzip attribute.zip in info data.
+- Unzip attribute.zip in info data. Attention that we only provide properties files for *train* and *val* subsets. For ground-truth files, we only offer a small number of annotations (restart frames) for sequences that belong to the *test* subset. Please upload the final results to the server for evaluation.
 
 - Rename and organize folders as follows：
 
@@ -109,9 +112,79 @@ The dataset download and file organization process is as follows：
 
 ### A Concise Example
 
-test.py is a simple example on how to use the toolkit to define a tracker, run experiments on VideoCube and evaluate performance.
+[test.py](./test.py) is a simple example on how to use the toolkit to define a tracker, run experiments on VideoCube and evaluate performance.
 
-The more detailed introduction will be uploaded soon.
+#### How to Define a Tracker?
+
+To define a tracker using the toolkit, simply inherit and override `init` and `update` methods from the [`Tracker`](./videocube/trackers/__init__.py) class. You can find an example in this [page](./tracker/siamfc.py). Here is a simple example:
+
+```Python
+from videocube.trackers import Tracker
+
+class IdentityTracker(Tracker):
+    def __init__(self):
+        super(IdentityTracker, self).__init__(
+            name='IdentityTracker',  # tracker name
+        )
+    
+    def init(self, image, box):
+        self.box = box
+
+    def update(self, image):
+        return self.box
+```
+
+#### How to Run Experiments on VideoCube?
+
+Instantiate an [`ExperimentVideoCube`](./videocube/experiments/videocube.py) object, and leave all experiment pipelines to its `run` method:
+
+```Python
+from videocube.experiments import ExperimentVideoCube
+
+# ... tracker definition ...
+
+# instantiate a tracker
+tracker = IdentityTracker()
+
+# setup experiment (validation subset)
+experiment = ExperimentVideoCube(
+  root_dir='SOT/VideoCube', # VideoCube's root directory
+  save_dir= os.path.join(root_dir,'result'), # the path to save the experiment result
+  subset='val', # 'train' | 'val' | 'test'
+  repetition=1 
+)
+experiment.run(
+  tracker, 
+  visualize=False,
+  save_img=False, 
+  method='restart' # method in run function means the evaluation mechanism, you can select the original mode (set none) or the restart mode (set restart)
+  )
+```
+
+#### How to Evaluate Performance?
+
+For evaluation in OPE mechanism, please use the `report` method of `ExperimentVideoCube` for this purpose:
+
+```Python
+# ... run experiments on GOT-10k ...
+
+# report tracking performance
+experiment.report([tracker.name],attribute_name)
+```
+
+For evaluation in R-OPE mechanism, please use the `report` and `report_robust` method of `ExperimentVideoCube` for this purpose:
+
+```Python
+# ... run experiments on GOT-10k ...
+
+# report tracking performance
+experiment.report([tracker.name],attribute_name)
+experiment.report_robust([tracker.name])
+```
+
+Attention, when evaluated on the __test subset__, you will have to submit your results to the [evaluation server](http://videocube.aitestunion.com/submit_supports) for evaluation. The `report` function will generate a `.zip` file which can be directly uploaded for submission. For more instructions, see [submission instruction](http://videocube.aitestunion.com/submit_supports).
+
+See public evaluation results on [VideoCube's leaderboard (OPE Mechanism)](http://videocube.aitestunion.com/leaderboard) and [VideoCube's leaderboard (R-OPE Mechanism)](http://videocube.aitestunion.com/leaderboard_restart).
 
 ### Issues
 
