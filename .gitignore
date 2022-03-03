@@ -14,3 +14,5 @@ dist/
 dev-videocube/
 dev-test.py
 organize-attribute.py
+instruction.md
+-got10k.py

@@ -5,9 +5,12 @@ import glob
 import numpy as np
 import six
 
-
 class VideoCube(object):
     r"""`VideoCube <http://videocube.aitestunion.com>`_ Dataset.
+
+    Publication:
+        ``Global Instance Tracking: Locating Target More Like Humans.``,S. Hu, X. Zhao*, L. Huang and K. Huang (*corresponding author)
+        IEEE Transactions on Pattern Analysis and Machine Intelligence, DOI:10.1109/TPAMI.2022.3153312
     
     Args:
         root_dir (string): Root directory of dataset where ``train``,
@@ -17,6 +20,7 @@ class VideoCube(object):
     """
     def __init__(self, root_dir, subset):
         super(VideoCube, self).__init__()
+        assert subset in ['train', 'val', 'test'], 'Unknown subset.'
         self.root_dir = root_dir
         self.subset = subset
         
@@ -46,12 +50,13 @@ class VideoCube(object):
 
         img_files = sorted(glob.glob(os.path.join(
             self.seq_dirs[index], '*.jpg')))
+
         anno = np.loadtxt(self.anno_files[index], delimiter=',')
+
         restart_flag = np.loadtxt(self.restart_files[index], delimiter=',', dtype=int)
 
         return img_files, anno, restart_flag
         
-
     def __len__(self):
         return len(self.seq_names)
 

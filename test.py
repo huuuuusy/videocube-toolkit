@@ -8,13 +8,13 @@ import os
 
 if __name__ == '__main__':
     os.environ["CUDA_VISIBLE_DEVICES"] = '3'
-    # the path of VideoCube data folder
+    # the path of VideoCube main folder
     root_dir = "/mnt/first/hushiyu/SOT/VideoCube/"
-    # root_dir = "/mnt/second/hushiyu/"
+
     # the path to save the experiment result
     save_dir = os.path.join(root_dir,'result')
-    # the subset of VideoCube, please select train/test/val/eye
-    subset = 'val'
+    # the subset of VideoCube, please select train/test/val
+    subset = 'test'
     repetitions = 1
 
     attribute_list = [
@@ -39,19 +39,18 @@ if __name__ == '__main__':
     net_path = '/home/user1/projects/VIS/videocube-toolkit-official/pretrained/siamfc/model.pth'
     tracker = TrackerSiamFC(net_path=net_path)
 
-    # for repetition in range(repetitions):
-    #     experiment = ExperimentVideoCube(root_dir, save_dir, subset, repetition+1)
-    #     experiment.run(tracker, visualize=False, save_img=False, method='restart')
-
+    for repetition in range(repetitions):
+        experiment = ExperimentVideoCube(root_dir, save_dir, subset, repetition+1)
+        experiment.run(tracker, visualize=False, save_img=False, method='restart')
 
     """
     II. EVALUATION
     Note: 
     please set your tracker in first, then add the other trackers (you can download existing tracking results for 20 SOTA trackers via http://videocube.aitestunion.com/)
     """
-    tracker_names = ['SiamFC']
 
     """evaluation in OPE"""
+    tracker_names = ['SiamFC']
     for repetition in range(repetitions):
         experiment = ExperimentVideoCube(root_dir, save_dir, subset, repetition+1)
         experiment.report(tracker_names, attribute_name='normal')

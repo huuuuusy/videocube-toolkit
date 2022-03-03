@@ -1,8 +1,10 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-from time import time
 import numpy as np
+
+import time
+import shutil
 
 import json
 import matplotlib.pyplot as plt
@@ -11,6 +13,7 @@ import matplotlib
 from ..datasets import VideoCube
 from ..utils.metrics import center_error,normalized_center_error, iou, diou, giou
 from ..utils.help import makedir
+from ..utils.ioutils import compress
 import cv2 as cv
 import pandas as pd
 
@@ -20,13 +23,13 @@ class ExperimentVideoCube(object):
     
     Args:
         root_dir (string): 
-            Root directory of VideoCube dataset where ``train``, ``val`` and ``test`` folders exist.
+            Root directory of VideoCube dataset where ``data``, and ``attribute`` folders exist.
         save_dir (string): 
             Save directory of VideoCube dataset to save the experiment results.
         subset (string): 
             Specify ``train``, ``val`` or ``test`` subset of VideoCube.
         repetition (int): 
-            The num of repetition. To ensure the accuracy of the experimental results, it is generally repeated three times.
+            The num of repetition.
     """
     def __init__(self, root_dir, save_dir, subset, repetition):
         super(ExperimentVideoCube, self).__init__()
@@ -42,7 +45,6 @@ class ExperimentVideoCube(object):
         
         self.nbins_iou = 101 # set 101 points in drawing success plot
         self.nbins_ce = 401 # set 401 points in drawing original precision plot (the 401 is the top threshold value in calculating the PRE)
-
         self.ce_threshold = 20 # original precision plot selects 20 pixels as threshold
 
         self.repetition = repetition 
@@ -58,9 +60,19 @@ class ExperimentVideoCube(object):
         """
         Run the tracker on VideoCube subset.
         """
-        print('Running tracker %s on VideoCube...' % tracker.name)
-        print('evaluation mechanism: %s' % method)
 
+        if self.subset == 'test':
+            print('\033[93m[WARNING]:\n' \
+                  'The groundtruths of VideoCube\'s test set is withholded.\n' \
+                  'You will have to submit your results to\n' \
+                  '[http://videocube.aitestunion.com/]' \
+                  '\nto access the performance.\033[0m')
+            time.sleep(2)
+
+        print('Running tracker %s on VideoCube...' % tracker.name)
+        print('Evaluation mechanism: %s' % method)
+
+        # loop over the complete dataset
         for s, (img_files, anno, restart_flag) in enumerate(self.dataset):
             seq_name = self.dataset.seq_names[s] 
             print('--Sequence {}/{}: {}'.format(s+1,len(self.dataset), seq_name))
@@ -123,6 +135,48 @@ class ExperimentVideoCube(object):
         Evaluate the tracker on VideoCube subset.
         """
         assert isinstance(tracker_names, (list, tuple))
+
+        if self.subset == 'test':
+            pwd = os.getcwd()
+
+            # generate compressed submission file for each tracker
+            for tracker_name in tracker_names:
+                # compress all tracking results
+                result_dir = os.path.join(self.result_dir, tracker_name, self.subset)
+
+                time_dir = os.path.join(self.time_dir, tracker_name, self.subset)
+
+                submission_dir = os.path.join(self.result_dir, tracker_name, 'submission')
+
+                makedir(submission_dir)
+                makedir(os.path.join(submission_dir, 'result'))
+                makedir(os.path.join(submission_dir, 'time'))
+
+                for result in sorted(os.listdir(result_dir)):
+                    if result.endswith('_%s.txt'%self.repetition):
+                        src_path = os.path.join(result_dir, result)
+                        dst_path = os.path.join(submission_dir, 'result',result[:-6]+'.txt')
+                        print('Copy result to {}'.format(dst_path))
+                        shutil.copyfile(src_path, dst_path)
+                for time in sorted(os.listdir(time_dir)):
+                    if time.endswith('_%s.txt'%self.repetition):
+                        src_path = os.path.join(time_dir, time)
+                        dst_path = os.path.join(submission_dir, 'time', time[:-6]+'.txt')
+                        print('Copy result to {}'.format(dst_path))
+                        shutil.copyfile(src_path, dst_path)    
+
+                compress(submission_dir, submission_dir)
+                print('Records saved at', submission_dir + '.zip')
+
+            # print submission guides
+            print('\033[93mLogin and follow instructions on')
+            print('http://videocube.aitestunion.com/submit_supports')
+            print('to upload and evaluate your tracking results\033[0m')
+
+            # switch back to previous working directory
+            os.chdir(pwd)
+
+            return None
         
         subset_report_dir = os.path.join(self.report_dir, self.subset)
         makedir(subset_report_dir)
@@ -453,7 +507,6 @@ class ExperimentVideoCube(object):
                 print(robust_score)
 
                 performance[name]['seq_wise'].update({seq_name: {
-                    'corrcoef_mean': corrcoef_mean,
                     'restart': restart,
                     'init': init,
                     'robust_score':robust_score}})
