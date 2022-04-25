@@ -1,6 +1,7 @@
 # VideoCube Python Toolkit
 
 > UPDATE:<br>
+> [2022.04.25] Update the [time](https://github.com/huuuuusy/videocube-toolkit/blob/master/videocube/trackers/__init__.py) calculation method based on [issue #1](https://github.com/huuuuusy/videocube-toolkit/issues/1). <br>
 > [2022.03.03] Update the toolkit installation, dataset download instructions and a concise example. Now the basic function of this toolkit has been finished. <br>
 
 This repository contains the official python toolkit for running experiments and evaluate performance on [VideoCube](http://videocube.aitestunion.com/) benchmark. The code is written in pure python and is compile-free.

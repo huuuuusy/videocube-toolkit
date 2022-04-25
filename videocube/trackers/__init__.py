@@ -1,5 +1,8 @@
 from __future__ import absolute_import
 
+from typing import Union
+import torch
+
 import numpy as np
 import time
 
@@ -13,6 +16,11 @@ class Tracker(object):
     def __init__(self, name, is_deterministic=False):
         self.name = name
         self.is_deterministic = is_deterministic
+        if self.is_using_cuda:
+            print('Detect the CUDA devide')
+            self._timer_start = torch.cuda.Event(enable_timing=True)
+            self._timer_stop = torch.cuda.Event(enable_timing=True)
+        self._timestamp = None
     
     def init(self, image, box):
         raise NotImplementedError()
@@ -20,6 +28,35 @@ class Tracker(object):
     def update(self, image):
         raise NotImplementedError()
 
+    @property
+    def is_using_cuda(self):
+        self.cuda_num = torch.cuda.device_count()
+        if self.cuda_num == 0:
+            return False
+        else:
+            return True
+
+    def _start_timing(self) -> Union[float, None]:
+        if self.is_using_cuda:
+            self._timer_start.record()
+            timestamp = None
+        else:
+            timestamp = time.time()
+            self._timestamp = timestamp
+        return timestamp
+
+    def _stop_timing(self) -> float:
+        if self.is_using_cuda:
+            self._timer_stop.record()
+            torch.cuda.synchronize()
+            # cuda event record return duration in milliseconds.
+            duration = self._timer_start.elapsed_time(
+                self._timer_stop
+            )
+            duration /= 1000.0
+        else:
+            duration = time.time() - self._timestamp
+        return duration
 
     def track(self,seq_name, img_files, anno, restart_flag, visualize, seq_result_dir, save_img, method):
         frame_num = len(img_files)
@@ -46,10 +83,11 @@ class Tracker(object):
             width = image.shape[1]
             img_resolution = (width,height)
                 
-            start_time = time.time() 
+            # start_time = time.time() 
+            self._start_timing()
             if f == 0: 
                 self.init(image, box)
-                times[f] = time.time() - start_time
+                times[f] = self._stop_timing()
             if fail_count >= 10 and method == 'restart' and f in restart_flag:
                 # the tracker will be restarted when the cumulative number of failures reaches 10
                 print('init again in %s' % f)                
@@ -59,7 +97,7 @@ class Tracker(object):
             else:
                 frame_box = self.update(image) 
                 frame_box = np.rint(frame_box)
-                times[f] = time.time() - start_time 
+                times[f] = self._stop_timing()
 
                 current_gt = anno[f,:].reshape((1,4))
                 frame_box = np.array(frame_box)
