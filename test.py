@@ -36,7 +36,7 @@ if __name__ == '__main__':
     method in run function means the evaluation mechanism, you can select the original mode (set none) or the restart mode (set restart)
     """ 
     
-    net_path = '/home/user1/projects/VIS/videocube-toolkit-official/pretrained/siamfc/model.pth'
+    net_path = os.path.join(os.path.split(os.path.realpath(__file__))[0],'pretrained', 'siamfc','model.pth')
     tracker = TrackerSiamFC(net_path=net_path)
 
     for repetition in range(repetitions):
