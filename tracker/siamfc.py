@@ -73,14 +73,7 @@ class TrackerSiamFC(Tracker):
 
         # setup GPU device if available
         self.cuda = torch.cuda.is_available()
-        self.cuda_num = torch.cuda.device_count()
-        if self.cuda_num == 0:
-            self.device = torch.device('cpu')
-        elif self.cuda_num == 1:
-            self.device = torch.device('cuda:0')
-        else:
-            self.device = torch.device('cuda:2,3')
-        #self.device = torch.device('cuda:0' if self.cuda else 'cpu')
+        self.device = torch.device('cuda:0' if self.cuda else 'cpu')
 
         # setup model
         self.net = SiamFC()
@@ -229,6 +222,14 @@ class TrackerSiamFC(Tracker):
             self.center[0] + 1 - (self.target_sz[0] - 1) / 2,
             self.target_sz[1], self.target_sz[0]])
         
+        # to keep center not that rediculars, which effects self._crop_and_resize
+        # updated based on issue #2(https://github.com/huuuuusy/videocube-toolkit/issues/2), thanks a lot for MzeroMiko
+        if abs(self.center[0]) > 2 * height or abs(self.center[1]) > 2 * width:
+            print("WARNING: Force reset center. center:", self.center, ", size:", self.target_sz)
+            self.center[0] = height if self.center[0] > 0 else 0
+            self.center[1] = width if self.center[1] > 0 else 0
+
+
         if box[0] < 0 or box[1] < 0 or box[0]+box[2] > width or box[1]+box[3] > height:
             box = np.array([0,0,0,0])
         return box
