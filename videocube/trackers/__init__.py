@@ -6,6 +6,8 @@ import torch
 import numpy as np
 import time
 
+import gc
+
 import cv2 as cv
 
 from ..utils.metrics import iou
@@ -73,8 +75,9 @@ class Tracker(object):
             cv.namedWindow(display_name, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO)
             cv.resizeWindow(display_name, 960, 720)
         
-        # with concurrent.futures.ProcessPoolExecutor() as executor: 
-        #     executor.map(cv.imread, img_files)
+        # TODO: improve the imread speed
+        with concurrent.futures.ProcessPoolExecutor() as executor: 
+            executor.map(cv.imread, img_files)
 
         for f, img_file in enumerate(img_files):
 
@@ -137,14 +140,21 @@ class Tracker(object):
                     gt = [int(s) for s in anno[f,:]]
                     cv.rectangle(frame_disp, (gt[0], gt[1]), (gt[2] + gt[0], gt[3] + gt[1]),(0, 0, 255), 5)
 
-                if visualize:
-                    cv.imshow(display_name, frame_disp)
-                if save_img:
-                    save_path = "{}/{:>06d}.jpg".format(seq_result_dir, f)
-                    cv.imwrite(save_path, frame_disp)
+                    if visualize:
+                        cv.imshow(display_name, frame_disp)
+                    if save_img:
+                        save_path = "{}/{:>06d}.jpg".format(seq_result_dir, f)
+                        cv.imwrite(save_path, frame_disp)
+                    
+                    del frame_disp
+                    gc.collect()
+
                 key = cv.waitKey(1)
                 if key == ord('q'):
                     break
+
+            del image
+            gc.collect()
           
         if visualize:
             cv.destroyAllWindows()
