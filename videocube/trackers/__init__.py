@@ -73,8 +73,8 @@ class Tracker(object):
             cv.namedWindow(display_name, cv.WINDOW_NORMAL | cv.WINDOW_KEEPRATIO)
             cv.resizeWindow(display_name, 960, 720)
         
-        with concurrent.futures.ProcessPoolExecutor() as executor: 
-            executor.map(cv.imread, img_files)
+        # with concurrent.futures.ProcessPoolExecutor() as executor: 
+        #     executor.map(cv.imread, img_files)
 
         for f, img_file in enumerate(img_files):
 

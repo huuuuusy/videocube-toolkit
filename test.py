@@ -14,7 +14,7 @@ if __name__ == '__main__':
     # the path to save the experiment result
     save_dir = os.path.join(root_dir,'result')
     # the subset of VideoCube, please select train/test/val
-    subset = 'test'
+    subset = 'train'
     repetitions = 1
 
     attribute_list = [
@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
     for repetition in range(repetitions):
         experiment = ExperimentVideoCube(root_dir, save_dir, subset, repetition+1)
-        experiment.run(tracker, visualize=False, save_img=False, method='restart')
+        experiment.run(tracker, visualize=False, save_img=False, method=None)
 
     """
     II. EVALUATION

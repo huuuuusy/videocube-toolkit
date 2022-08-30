@@ -5,7 +5,7 @@ import os
 def makedir(path):
     isExists=os.path.exists(path)
     if not isExists:        
-        os.mkdir(path)
+        os.makedirs(path)
         return True
     else:
         return False

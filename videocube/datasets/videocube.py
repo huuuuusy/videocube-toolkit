@@ -59,4 +59,3 @@ class VideoCube(object):
         
     def __len__(self):
         return len(self.seq_names)
-
