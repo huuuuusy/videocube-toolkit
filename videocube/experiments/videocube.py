@@ -31,17 +31,23 @@ class ExperimentVideoCube(object):
         repetition (int): 
             The num of repetition.
     """
-    def __init__(self, root_dir, save_dir, subset, repetition):
+    def __init__(self, root_dir, save_dir, subset, repetition, version):
         super(ExperimentVideoCube, self).__init__()
         self.root_dir = root_dir
         self.subset = subset
-        self.dataset = VideoCube(root_dir, subset)
+        self.dataset = VideoCube(root_dir, subset, version)
+        self.version = version
 
         self.result_dir = os.path.join(save_dir, 'results') 
-        self.report_dir = os.path.join(save_dir, 'reports') 
         self.time_dir = os.path.join(save_dir, 'time')
-        self.analysis_dir = os.path.join(save_dir, 'analysis')
         self.img_dir = os.path.join(save_dir, 'image')
+
+        if self.version == 'full':
+            self.report_dir = os.path.join(save_dir, 'reports') 
+            self.analysis_dir = os.path.join(save_dir, 'analysis')
+        elif self.version == 'tiny':
+            self.report_dir = os.path.join(save_dir, 'reports-tiny') 
+            self.analysis_dir = os.path.join(save_dir, 'analysis-tiny')
         
         self.nbins_iou = 101 # set 101 points in drawing success plot
         self.nbins_ce = 401 # set 401 points in drawing original precision plot (the 401 is the top threshold value in calculating the PRE)
@@ -146,7 +152,10 @@ class ExperimentVideoCube(object):
 
                 time_dir = os.path.join(self.time_dir, tracker_name, self.subset)
 
-                submission_dir = os.path.join(self.result_dir, tracker_name, 'submission')
+                if self.version == 'full':
+                    submission_dir = os.path.join(self.result_dir, tracker_name, 'submission')
+                elif self.version == 'tiny':
+                    submission_dir = os.path.join(self.result_dir, tracker_name, 'submission-tiny')
 
                 makedir(submission_dir)
                 makedir(os.path.join(submission_dir, 'result'))
@@ -305,9 +314,15 @@ class ExperimentVideoCube(object):
                 time_file = os.path.join(
                     self.time_dir, name, self.subset,'{}_{}_{}.txt'.format(name, num, self.repetition)) 
                 
-                if os.path.isfile(time_file):
-                    times = np.loadtxt(time_file)
+                # if os.path.isfile(time_file):
+                #     times = np.loadtxt(time_file)
                     
+                #     times = times[times > 0]
+                #     if len(times) > 0:
+                #         speeds[s] = np.nanmean(1. / times)
+                if os.path.exists(time_file):
+                    times = np.loadtxt(time_file, delimiter=',')
+                    times = times[~np.isnan(times)]
                     times = times[times > 0]
                     if len(times) > 0:
                         speeds[s] = np.nanmean(1. / times)

@@ -4,6 +4,7 @@ import os
 import glob
 import numpy as np
 import six
+import json
 
 class VideoCube(object):
     r"""`VideoCube <http://videocube.aitestunion.com>`_ Dataset.
@@ -18,13 +19,19 @@ class VideoCube(object):
         subset (string, optional): Specify ``train``, ``val`` or ``test``
             subset of VideoCube.
     """
-    def __init__(self, root_dir, subset):
+    def __init__(self, root_dir, subset, version):
         super(VideoCube, self).__init__()
         assert subset in ['train', 'val', 'test'], 'Unknown subset.'
         self.root_dir = root_dir
         self.subset = subset
-        
-        self.seq_names = ['%03d'%num for num in np.loadtxt(os.path.join(root_dir, 'data', '{}_list.txt'.format(subset)))]
+
+        self.version = version # set the version as 'tiny' or 'full'
+
+        f = open(os.path.join(os.path.split(os.path.realpath(__file__))[0],'videocube.json'),'r',encoding='utf-8')
+        self.infos = json.load(f)[self.version]            
+        f.close() 
+
+        self.seq_names = self.infos[self.subset]
         
         if subset in ['train','val','test']:
             self.seq_dirs = [os.path.join(root_dir, 'data', subset, s,'frame_{}'.format(s)) for s in self.seq_names]

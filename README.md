@@ -1,6 +1,7 @@
 # VideoCube Python Toolkit
 
 > UPDATE:<br>
+> [2023.02.08] To make it easier for users to research with VideoCube, we have selected 150 representative sequences from the original version (500 sequences) to form ***VideoCube-Tiny***. This toolkit has been updated to support the VideoCube-Tiny, and you can find a demo to select *tiny* or *full* version in [test.py](./test.py). <br>
 > [2022.06.20] Update the [SiamFC](https://github.com/huuuuusy/videocube-toolkit/blob/master/tracker/siamfc.py) based on [issue #2](https://github.com/huuuuusy/videocube-toolkit/issues/2) and [issue #3](https://github.com/huuuuusy/videocube-toolkit/issues/3). <br>
 > [2022.04.25] Update the [time](https://github.com/huuuuusy/videocube-toolkit/blob/master/videocube/trackers/__init__.py) calculation method based on [issue #1](https://github.com/huuuuusy/videocube-toolkit/issues/1). <br>
 > [2022.03.03] Update the toolkit installation, dataset download instructions and a concise example. Now the basic function of this toolkit has been finished. <br>
@@ -11,14 +12,14 @@ This repository contains the official python toolkit for running experiments and
 
 ```Bibtex
 @ARTICLE{9720246,
-author={Hu, Shiyu and Zhao, Xin and Huang, Lianghua and Huang, Kaiqi},
-journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
-title={Global Instance Tracking: Locating Target More Like Humans}, 
-year={2022},
-volume={},
-number={},
-pages={1-1},
-doi={10.1109/TPAMI.2022.3153312}}
+  author={Hu, Shiyu and Zhao, Xin and Huang, Lianghua and Huang, Kaiqi},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
+  title={Global Instance Tracking: Locating Target More Like Humans}, 
+  year={2023},
+  volume={45},
+  number={1},
+  pages={576-592},
+  doi={10.1109/TPAMI.2022.3153312}}
 ```
 
 &emsp;\[[Project](http://videocube.aitestunion.com/)\]\[[PDF](https://arxiv.org/abs/2202.13073)\]
@@ -60,17 +61,19 @@ The dataset download and file organization process is as follows：
 
 - Download three subsets ([*train*](http://videocube.aitestunion.com/downloads_dataset/train_data)/[*val*](http://videocube.aitestunion.com/downloads_dataset/val_data)/[*test*](http://videocube.aitestunion.com/downloads_dataset/test_data)) and the [*info*](http://videocube.aitestunion.com/downloads_dataset/info) data via [Download](http://videocube.aitestunion.com/downloads) page in the project website.
 
+- Note that we have released a tiny version named VideoCube-Tiny. The original full version includes ***500 sequences (1.4T)***, while the tiny version includes ***150 sequences (344G)***.
+
 - Check the number of files in each subset and run the unzipping script. Before unzipping:
 
-  - the *train* subset should includ 456 files (455 data files and an unzip_train bash)
+  - the *train* subset of *full version* should includ 456 files (455 data files and an unzip_train bash); the *train* subset of *tiny version* should includ 129 files (128 data files and an unzip_train bash)
 
-  - the *val* subset should includ 69 files (68 data files and an unzip_val bash)
+  - the *val* subset of *full version* should includ 69 files (68 data files and an unzip_val bash); the *val* subset of *tiny version* should includ 22 files (21 data files and an unzip_val bash)
 
-  - the *test* subset should includ 140 files (139 data files and an unzip_test bash)
+  - the *test* subset of *full version* should includ 140 files (139 data files and an unzip_test bash); the *test* subset of *tiny version* should includ 41 files (40 data files and an unzip_test bash)
 
 - Run the unzipping script in each subset folder, and delete the script after decompression.
 
-- Taking *val* subset as an example, the folder structure should follow:
+- Taking *val* subset of *full version* as an example, the folder structure should follow:
 
 ```
 |-- val/
@@ -87,7 +90,7 @@ The dataset download and file organization process is as follows：
 
 - Unzip attribute.zip in info data. Attention that we only provide properties files for *train* and *val* subsets. For ground-truth files, we only offer a small number of annotations (restart frames) for sequences that belong to the *test* subset. Please upload the final results to the server for evaluation.
 
-- Rename and organize folders as follows：
+- Rename and organize folders as follows (this example is illustrated for *full version*, while *tiny version* has the similar data structure)：
 
 ```
 |-- VideoCube/
@@ -155,7 +158,8 @@ experiment = ExperimentVideoCube(
   root_dir='SOT/VideoCube', # VideoCube's root directory
   save_dir= os.path.join(root_dir,'result'), # the path to save the experiment result
   subset='val', # 'train' | 'val' | 'test'
-  repetition=1 
+  repetition=1,
+  version='tiny' # set the version as 'tiny' or 'full' 
 )
 experiment.run(
   tracker, 
