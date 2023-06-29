@@ -65,11 +65,11 @@ The dataset download and file organization process is as follows：
 
 - Check the number of files in each subset and run the unzipping script. Before unzipping:
 
-  - the *train* subset of *full version* should includ 456 files (455 data files and an unzip_train bash); the *train* subset of *tiny version* should includ 129 files (128 data files and an unzip_train bash)
+  - the *train* subset of *full version* should include 456 files (455 data files and an unzip_train bash); the *train* subset of *tiny version* should include 129 files (128 data files and an unzip_train bash)
 
-  - the *val* subset of *full version* should includ 69 files (68 data files and an unzip_val bash); the *val* subset of *tiny version* should includ 22 files (21 data files and an unzip_val bash)
+  - the *val* subset of *full version* should include 69 files (68 data files and an unzip_val bash); the *val* subset of *tiny version* should include 22 files (21 data files and an unzip_val bash)
 
-  - the *test* subset of *full version* should includ 140 files (139 data files and an unzip_test bash); the *test* subset of *tiny version* should includ 41 files (40 data files and an unzip_test bash)
+  - the *test* subset of *full version* should include 140 files (139 data files and an unzip_test bash); the *test* subset of *tiny version* should include 41 files (40 data files and an unzip_test bash)
 
 - Run the unzipping script in each subset folder, and delete the script after decompression.
 
