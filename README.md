@@ -42,7 +42,7 @@ This repository contains the official python toolkit for running experiments and
 
 ## Table of Contents
 
-- [VideoCube & MGIT Python Toolkit](#VideoCube & MGIT Python Toolkit)
+- [VideoCube & MGIT Python Toolkit](#videocube--mgit-python-toolkit)
   - [Table of Contents](#table-of-contents)
     - [Toolkit Installation](#toolkit-installation)
     - [Dataset Download](#dataset-download)
