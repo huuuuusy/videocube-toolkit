@@ -1,12 +1,12 @@
 from __future__ import absolute_import, division
 
+import cv2 as cv
+import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.init as init
 import torch.nn.functional as F
+import torch.nn.init as init
 import torch.optim as optim
-import numpy as np
-import cv2 as cv
 from collections import namedtuple
 from torch.optim.lr_scheduler import ExponentialLR
 
@@ -56,18 +56,18 @@ class SiamFC(nn.Module):
 
     def _initialize_weights(self):
         for m in self.modules():
-            if isinstance(m, nn.Conv2d): 
+            if isinstance(m, nn.Conv2d):
                 init.kaiming_normal_(m.weight.data, mode='fan_out',
                                      nonlinearity='relu')
                 m.bias.data.fill_(0)
-            elif isinstance(m, nn.BatchNorm2d): 
+            elif isinstance(m, nn.BatchNorm2d):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
 
 
 class TrackerSiamFC(Tracker):
 
-    def __init__(self, net_path=None, **kargs): 
+    def __init__(self, net_path=None, **kargs):
         super(TrackerSiamFC, self).__init__(name='SiamFC', is_deterministic=True)
         self.cfg = self.parse_args(**kargs)
 
@@ -148,7 +148,7 @@ class TrackerSiamFC(Tracker):
         context = self.cfg.context * np.sum(self.target_sz)
         self.z_sz = np.sqrt(np.prod(self.target_sz + context))
         self.x_sz = self.z_sz * \
-            self.cfg.instance_sz / self.cfg.exemplar_sz
+                    self.cfg.instance_sz / self.cfg.exemplar_sz
 
         # exemplar image
         self.avg_color = np.mean(image, axis=(0, 1))
@@ -198,20 +198,20 @@ class TrackerSiamFC(Tracker):
         response -= response.min()
         response /= response.sum() + 1e-16
         response = (1 - self.cfg.window_influence) * response + \
-            self.cfg.window_influence * self.hann_window
+                   self.cfg.window_influence * self.hann_window
         loc = np.unravel_index(response.argmax(), response.shape)
 
         # locate target center
         disp_in_response = np.array(loc) - self.upscale_sz // 2
         disp_in_instance = disp_in_response * \
-            self.cfg.total_stride / self.cfg.response_up
+                           self.cfg.total_stride / self.cfg.response_up
         disp_in_image = disp_in_instance * self.x_sz * \
-            self.scale_factors[scale_id] / self.cfg.instance_sz
+                        self.scale_factors[scale_id] / self.cfg.instance_sz
         self.center += disp_in_image
 
         # update target size
-        scale =  (1 - self.cfg.scale_lr) * 1.0 + \
-            self.cfg.scale_lr * self.scale_factors[scale_id]
+        scale = (1 - self.cfg.scale_lr) * 1.0 + \
+                self.cfg.scale_lr * self.scale_factors[scale_id]
         self.target_sz *= scale
         self.z_sz *= scale
         self.x_sz *= scale
@@ -221,7 +221,7 @@ class TrackerSiamFC(Tracker):
             self.center[1] + 1 - (self.target_sz[1] - 1) / 2,
             self.center[0] + 1 - (self.target_sz[0] - 1) / 2,
             self.target_sz[1], self.target_sz[0]])
-        
+
         # to keep center not that rediculars, which effects self._crop_and_resize
         # updated based on issue #2(https://github.com/huuuuusy/videocube-toolkit/issues/2), thanks a lot for MzeroMiko
         if abs(self.center[0]) > 2 * height or abs(self.center[1]) > 2 * width:
@@ -229,9 +229,8 @@ class TrackerSiamFC(Tracker):
             self.center[0] = height if self.center[0] > 0 else 0
             self.center[1] = width if self.center[1] > 0 else 0
 
-
-        if box[0] < 0 or box[1] < 0 or box[0]+box[2] > width or box[1]+box[3] > height:
-            box = np.array([0,0,0,0])
+        if box[0] < 0 or box[1] < 0 or box[0] + box[2] > width or box[1] + box[3] > height:
+            box = np.array([0, 0, 0, 0])
         return box
 
     def step(self, batch, backward=True, update_lr=False):

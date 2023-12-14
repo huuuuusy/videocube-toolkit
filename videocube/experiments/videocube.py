@@ -1,21 +1,19 @@
 from __future__ import absolute_import, division, print_function
 
-import os
-import numpy as np
-
-import time
-import shutil
-
+import cv2 as cv
 import json
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import pandas as pd
+import shutil
+import time
 
 from ..datasets import VideoCube
-from ..utils.metrics import center_error,normalized_center_error, iou, diou, giou
 from ..utils.help import makedir
 from ..utils.ioutils import compress
-import cv2 as cv
-import pandas as pd
+from ..utils.metrics import center_error, normalized_center_error, iou, diou, giou
 
 
 class ExperimentVideoCube(object):
@@ -31,6 +29,7 @@ class ExperimentVideoCube(object):
         repetition (int): 
             The num of repetition.
     """
+
     def __init__(self, root_dir, save_dir, subset, repetition, version):
         super(ExperimentVideoCube, self).__init__()
         self.root_dir = root_dir
@@ -38,29 +37,28 @@ class ExperimentVideoCube(object):
         self.dataset = VideoCube(root_dir, subset, version)
         self.version = version
 
-        self.result_dir = os.path.join(save_dir, 'results') 
+        self.result_dir = os.path.join(save_dir, 'results')
         self.time_dir = os.path.join(save_dir, 'time')
         self.img_dir = os.path.join(save_dir, 'image')
 
         if self.version == 'full':
-            self.report_dir = os.path.join(save_dir, 'reports') 
+            self.report_dir = os.path.join(save_dir, 'reports')
             self.analysis_dir = os.path.join(save_dir, 'analysis')
         elif self.version == 'tiny':
-            self.report_dir = os.path.join(save_dir, 'reports-tiny') 
+            self.report_dir = os.path.join(save_dir, 'reports-tiny')
             self.analysis_dir = os.path.join(save_dir, 'analysis-tiny')
-        
-        self.nbins_iou = 101 # set 101 points in drawing success plot
-        self.nbins_ce = 401 # set 401 points in drawing original precision plot (the 401 is the top threshold value in calculating the PRE)
-        self.ce_threshold = 20 # original precision plot selects 20 pixels as threshold
 
-        self.repetition = repetition 
+        self.nbins_iou = 101  # set 101 points in drawing success plot
+        self.nbins_ce = 401  # set 401 points in drawing original precision plot (the 401 is the top threshold value in calculating the PRE)
+        self.ce_threshold = 20  # original precision plot selects 20 pixels as threshold
+
+        self.repetition = repetition
         makedir(save_dir)
         makedir(self.result_dir)
         makedir(self.report_dir)
         makedir(self.time_dir)
         makedir(self.analysis_dir)
         makedir(self.img_dir)
-        
 
     def run(self, tracker, visualize, save_img, method):
         """
@@ -80,8 +78,8 @@ class ExperimentVideoCube(object):
 
         # loop over the complete dataset
         for s, (img_files, anno, restart_flag) in enumerate(self.dataset):
-            seq_name = self.dataset.seq_names[s] 
-            print('--Sequence {}/{}: {}'.format(s+1,len(self.dataset), seq_name))
+            seq_name = self.dataset.seq_names[s]
+            print('--Sequence {}/{}: {}'.format(s + 1, len(self.dataset), seq_name))
 
             print('  Repetition: {}'.format(self.repetition))
             if method == None:
@@ -97,44 +95,47 @@ class ExperimentVideoCube(object):
             tracker_result_dir = os.path.join(self.result_dir, record_name, self.subset)
             tracker_time_dir = os.path.join(self.time_dir, record_name, self.subset)
 
-            makedir(tracker_result_dir)                
+            makedir(tracker_result_dir)
             makedir(tracker_time_dir)
 
             # setting the dir for saving tracking result images
-            makedir( os.path.join(self.img_dir, record_name))
+            makedir(os.path.join(self.img_dir, record_name))
             tracker_img_dir = os.path.join(self.img_dir, record_name, self.subset)
             makedir(tracker_img_dir)
             seq_result_dir = os.path.join(tracker_img_dir, seq_name)
             makedir(seq_result_dir)
 
             # setting the path for saving tracking result
-            record_file = os.path.join(tracker_result_dir, '{}_{}_{}.txt'.format(record_name , seq_name , str(self.repetition)))
+            record_file = os.path.join(tracker_result_dir,
+                                       '{}_{}_{}.txt'.format(record_name, seq_name, str(self.repetition)))
 
             # setting the path for saving tracking result (restart position in R-OPE mechanism)
-            init_positions_file = os.path.join(tracker_result_dir, 'init_{}_{}_{}.txt'.format(record_name, seq_name, self.repetition))
+            init_positions_file = os.path.join(tracker_result_dir,
+                                               'init_{}_{}_{}.txt'.format(record_name, seq_name, self.repetition))
 
             # setting the path for saving tracking time 
             time_file = os.path.join(tracker_time_dir, '{}_{}_{}.txt'.format(record_name, seq_name, self.repetition))
-            
+
             if os.path.exists(record_file):
                 print('  Found results in {}'.format(record_file))
                 continue
-            
+
             # tracking loop
             if method == None:
                 # tracking in original OPE mechanism
-                boxes, times = tracker.track(seq_name, img_files, anno, restart_flag, visualize, seq_result_dir, save_img, method)
+                boxes, times = tracker.track(seq_name, img_files, anno, restart_flag, visualize, seq_result_dir,
+                                             save_img, method)
             elif method == 'restart':
                 # tracking in novel R-OPE mechanism
-                boxes, times, init_positions = tracker.track(seq_name, img_files, anno,  restart_flag, visualize, seq_result_dir, save_img, method)
+                boxes, times, init_positions = tracker.track(seq_name, img_files, anno, restart_flag, visualize,
+                                                             seq_result_dir, save_img, method)
                 # save the restart locations
                 f_init = open(init_positions_file, 'w')
                 for num in init_positions:
-                    f_init.writelines(str(num)+'\n')
+                    f_init.writelines(str(num) + '\n')
                 f_init.close()
 
             self._record(record_file, time_file, boxes, times)
-
 
     def report(self, tracker_names, attribute_name):
         """
@@ -162,17 +163,17 @@ class ExperimentVideoCube(object):
                 makedir(os.path.join(submission_dir, 'time'))
 
                 for result in sorted(os.listdir(result_dir)):
-                    if result.endswith('_%s.txt'%self.repetition):
+                    if result.endswith('_%s.txt' % self.repetition):
                         src_path = os.path.join(result_dir, result)
-                        dst_path = os.path.join(submission_dir, 'result',result[:-6]+'.txt')
+                        dst_path = os.path.join(submission_dir, 'result', result[:-6] + '.txt')
                         print('Copy result to {}'.format(dst_path))
                         shutil.copyfile(src_path, dst_path)
                 for time in sorted(os.listdir(time_dir)):
-                    if time.endswith('_%s.txt'%self.repetition):
+                    if time.endswith('_%s.txt' % self.repetition):
                         src_path = os.path.join(time_dir, time)
-                        dst_path = os.path.join(submission_dir, 'time', time[:-6]+'.txt')
+                        dst_path = os.path.join(submission_dir, 'time', time[:-6] + '.txt')
                         print('Copy result to {}'.format(dst_path))
-                        shutil.copyfile(src_path, dst_path)    
+                        shutil.copyfile(src_path, dst_path)
 
                 compress(submission_dir, submission_dir)
                 print('Records saved at', submission_dir + '.zip')
@@ -186,7 +187,7 @@ class ExperimentVideoCube(object):
             os.chdir(pwd)
 
             return None
-        
+
         subset_report_dir = os.path.join(self.report_dir, self.subset)
         makedir(subset_report_dir)
 
@@ -199,12 +200,14 @@ class ExperimentVideoCube(object):
         performance = {}
         for name in tracker_names:
 
-            single_report_file = os.path.join(subset_analysis_dir, '{}_{}_{}_{}.json'.format(name, self.subset, attribute_name, str(self.repetition)))
-            
+            single_report_file = os.path.join(subset_analysis_dir,
+                                              '{}_{}_{}_{}.json'.format(name, self.subset, attribute_name,
+                                                                        str(self.repetition)))
+
             if os.path.exists(single_report_file):
-                f = open(single_report_file,'r',encoding='utf-8')
-                single_performance = json.load(f)            
-                performance.update({name:single_performance})
+                f = open(single_report_file, 'r', encoding='utf-8')
+                single_performance = json.load(f)
+                performance.update({name: single_performance})
                 f.close()
                 print('Existing result in {}'.format(name))
                 continue
@@ -212,7 +215,7 @@ class ExperimentVideoCube(object):
                 performance.update({name: {
                     'overall': {},
                     'seq_wise': {}}})
-            
+
             seq_num = len(self.dataset)
 
             # save the ious, dious and gious for success plot
@@ -229,36 +232,40 @@ class ExperimentVideoCube(object):
             speeds = np.zeros(seq_num)
 
             # save the normalize precision score
-            norm_prec_score  = np.zeros(seq_num)
-            
+            norm_prec_score = np.zeros(seq_num)
+
             for s in range(len(self.dataset.seq_names)):
                 num = self.dataset.seq_names[s]
                 # get the information of selected video
                 img_files, anno, _ = self.dataset[s]
 
-                print('repetition {}: Evaluate tracker {} in video num {} with {} attribute '.format(self.repetition, name, num, attribute_name))
-                
+                print('repetition {}: Evaluate tracker {} in video num {} with {} attribute '.format(self.repetition,
+                                                                                                     name, num,
+                                                                                                     attribute_name))
+
                 # read absent info
-                absent_path = os.path.join(self.root_dir, 'attribute', 'absent','{}.txt'.format(num))
-                absent = pd.read_csv(absent_path,header=None,names=['absent'])
+                absent_path = os.path.join(self.root_dir, 'attribute', 'absent', '{}.txt'.format(num))
+                absent = pd.read_csv(absent_path, header=None, names=['absent'])
 
                 # read shotcut info
-                shotcut_path = os.path.join(self.root_dir, 'attribute', 'shotcut','{}.txt'.format(num))
-                shotcut = pd.read_csv(shotcut_path,header=None,names=['shotcut'])
+                shotcut_path = os.path.join(self.root_dir, 'attribute', 'shotcut', '{}.txt'.format(num))
+                shotcut = pd.read_csv(shotcut_path, header=None, names=['shotcut'])
 
                 # read attribute info
                 if attribute_name != 'normal':
-                    attribute_path = os.path.join(self.root_dir, 'attribute', attribute_name,'{}.txt'.format(num))
-                    attribute = pd.read_csv(attribute_path,header=None,names=[attribute_name])
-                
+                    attribute_path = os.path.join(self.root_dir, 'attribute', attribute_name, '{}.txt'.format(num))
+                    attribute = pd.read_csv(attribute_path, header=None, names=[attribute_name])
+
                 # frame resolution
                 img_height = cv.imread(img_files[0]).shape[0]
                 img_width = cv.imread(img_files[0]).shape[1]
-                img_resolution = (img_width,img_height)
+                img_resolution = (img_width, img_height)
                 bound = img_resolution
 
                 # read tracking results
-                boxes = np.loadtxt(os.path.join(self.result_dir, name, self.subset, '{}_{}_{}.txt'.format(name, num, self.repetition)), delimiter=',')
+                boxes = np.loadtxt(
+                    os.path.join(self.result_dir, name, self.subset, '{}_{}_{}.txt'.format(name, num, self.repetition)),
+                    delimiter=',')
 
                 anno = np.array(anno)
                 boxes = np.array(boxes)
@@ -271,52 +278,58 @@ class ExperimentVideoCube(object):
                     box[3] = box[3] if box[3] < img_height - box[1] else img_height - box[1]
 
                 assert boxes.shape == anno.shape
-                
+
                 # calculate ious, gious, dious for success plot
                 # calculate center errors and normalized center errors for precision plot
-                seq_ious, seq_dious, seq_gious, seq_center_errors, seq_norm_center_errors, flags = self._calc_metrics(boxes, anno, bound)
-                
-                seq_ious = pd.DataFrame(seq_ious, columns = ['seq_ious'])
-                seq_dious = pd.DataFrame(seq_dious, columns = ['seq_dious'])
-                seq_gious = pd.DataFrame(seq_gious, columns = ['seq_gious'])
-                seq_center_errors = pd.DataFrame(seq_center_errors, columns = ['seq_center_errors'])
-                seq_norm_center_errors = pd.DataFrame(seq_norm_center_errors, columns= ['seq_norm_center_errors'])
-                flags = pd.DataFrame(flags, columns = ['flags'])
+                seq_ious, seq_dious, seq_gious, seq_center_errors, seq_norm_center_errors, flags = self._calc_metrics(
+                    boxes, anno, bound)
+
+                seq_ious = pd.DataFrame(seq_ious, columns=['seq_ious'])
+                seq_dious = pd.DataFrame(seq_dious, columns=['seq_dious'])
+                seq_gious = pd.DataFrame(seq_gious, columns=['seq_gious'])
+                seq_center_errors = pd.DataFrame(seq_center_errors, columns=['seq_center_errors'])
+                seq_norm_center_errors = pd.DataFrame(seq_norm_center_errors, columns=['seq_norm_center_errors'])
+                flags = pd.DataFrame(flags, columns=['flags'])
 
                 if attribute_name != 'normal':
-                    data = pd.concat([seq_ious,seq_dious, seq_gious,seq_center_errors,seq_norm_center_errors,flags, absent,shotcut,attribute],axis=1) 
+                    data = pd.concat(
+                        [seq_ious, seq_dious, seq_gious, seq_center_errors, seq_norm_center_errors, flags, absent,
+                         shotcut, attribute], axis=1)
                 else:
-                    data = pd.concat([seq_ious,seq_dious, seq_gious,seq_center_errors,seq_norm_center_errors,flags, absent,shotcut],axis=1) 
-                
-                # Frames without target and transition frames are not included in the evaluation
-                data = data[data.apply(lambda x: x['absent']== 0 and x['shotcut']==0, axis=1)]
+                    data = pd.concat(
+                        [seq_ious, seq_dious, seq_gious, seq_center_errors, seq_norm_center_errors, flags, absent,
+                         shotcut], axis=1)
+
+                    # Frames without target and transition frames are not included in the evaluation
+                data = data[data.apply(lambda x: x['absent'] == 0 and x['shotcut'] == 0, axis=1)]
 
                 if attribute_name != 'normal':
                     # Pick frames with difficult attributes
-                    data = self.select_attribute_frames(data, attribute_name)  
-                
-                data = data.drop(labels=['absent','shotcut'],axis = 1)
+                    data = self.select_attribute_frames(data, attribute_name)
+
+                data = data.drop(labels=['absent', 'shotcut'], axis=1)
 
                 seq_ious = data['seq_ious']
                 seq_dious = data['seq_dious']
                 seq_gious = data['seq_gious']
                 seq_center_errors = data['seq_center_errors']
-                seq_norm_center_errors = data['seq_norm_center_errors']   
-                flags = data['flags']  
-                
+                seq_norm_center_errors = data['seq_norm_center_errors']
+                flags = data['flags']
+
                 # Calculate the proportion of all the frames that fall into area 5 (groundtruth area)
-                norm_prec_score[s] = np.nansum(flags)/len(flags)
+                norm_prec_score[s] = np.nansum(flags) / len(flags)
 
                 # Save the 5 curves of the tracker on the current video
-                succ_curve[s], succ_dcurve[s], succ_gcurve[s],prec_curve[s], norm_prec_curve[s] = self._calc_curves(seq_ious, seq_dious, seq_gious,seq_center_errors, seq_norm_center_errors)
+                succ_curve[s], succ_dcurve[s], succ_gcurve[s], prec_curve[s], norm_prec_curve[s] = self._calc_curves(
+                    seq_ious, seq_dious, seq_gious, seq_center_errors, seq_norm_center_errors)
 
                 # calculate average speed
                 time_file = os.path.join(
-                    self.time_dir, name, self.subset,'{}_{}_{}.txt'.format(name, num, self.repetition)) 
-                
+                    self.time_dir, name, self.subset, '{}_{}_{}.txt'.format(name, num, self.repetition))
+
                 # if os.path.isfile(time_file):
                 #     times = np.loadtxt(time_file)
-                    
+
                 #     times = times[times > 0]
                 #     if len(times) > 0:
                 #         speeds[s] = np.nanmean(1. / times)
@@ -330,10 +343,10 @@ class ExperimentVideoCube(object):
                 # Update the results in current video (Only save scores)
                 performance[name]['seq_wise'].update({num: {
                     'success_score_iou': np.nanmean(succ_curve[s]),
-                    'success_score_diou': np.nanmean(succ_dcurve[s]),                    
+                    'success_score_diou': np.nanmean(succ_dcurve[s]),
                     'success_score_giou': np.nanmean(succ_gcurve[s]),
                     'precision_score': prec_curve[s][self.ce_threshold],
-                    'norm_prec_score':norm_prec_score[s],
+                    'norm_prec_score': norm_prec_score[s],
                     'success_rate_iou': succ_curve[s][self.nbins_iou // 2],
                     'success_rate_diou': succ_dcurve[s][self.nbins_iou // 2],
                     'success_rate_giou': succ_gcurve[s][self.nbins_iou // 2],
@@ -373,7 +386,7 @@ class ExperimentVideoCube(object):
                 'success_score_diou': succ_dscore,
                 'success_score_giou': succ_gscore,
                 'precision_score': prec_score,
-                'norm_prec_score':norm_prec_score,
+                'norm_prec_score': norm_prec_score,
                 'success_rate_iou': succ_rate,
                 'success_rate_diou': succ_drate,
                 'success_rate_giou': succ_grate,
@@ -390,34 +403,32 @@ class ExperimentVideoCube(object):
         self.plot_curves_([report_file], tracker_names, attribute_name, self.repetition)
 
         return performance
-    
 
     def select_attribute_frames(self, data, attribute_name):
         """
         Pick frames with difficult attributes
         """
         if attribute_name == 'corrcoef':
-            data = data[data.apply(lambda x: x[attribute_name] <=0.8, axis=1)]
+            data = data[data.apply(lambda x: x[attribute_name] <= 0.8, axis=1)]
         elif attribute_name == 'motion':
-            data = data[data.apply(lambda x: x[attribute_name] >=0.2, axis=1)]
+            data = data[data.apply(lambda x: x[attribute_name] >= 0.2, axis=1)]
         elif attribute_name == 'occlusion':
             data = data[data.apply(lambda x: x[attribute_name] == 1, axis=1)]
         elif attribute_name == 'delta_blur':
-            data = data[data.apply(lambda x: x[attribute_name] >= 1.5, axis=1)] 
+            data = data[data.apply(lambda x: x[attribute_name] >= 1.5, axis=1)]
         elif attribute_name == 'ratio':
-            data = data[data.apply(lambda x: x[attribute_name] >=3 or x[attribute_name] <=0.33, axis=1)] 
+            data = data[data.apply(lambda x: x[attribute_name] >= 3 or x[attribute_name] <= 0.33, axis=1)]
         elif attribute_name == 'delta_ratio':
-            data = data[data.apply(lambda x: x[attribute_name] >=0.2, axis=1)]
+            data = data[data.apply(lambda x: x[attribute_name] >= 0.2, axis=1)]
         elif attribute_name == 'scale':
-            data = data[data.apply(lambda x: x[attribute_name] >=500 or x[attribute_name] <=50, axis=1)]
+            data = data[data.apply(lambda x: x[attribute_name] >= 500 or x[attribute_name] <= 50, axis=1)]
         elif attribute_name == 'delta_scale':
-            data = data[data.apply(lambda x: x[attribute_name] >=30, axis=1)]
+            data = data[data.apply(lambda x: x[attribute_name] >= 30, axis=1)]
         elif attribute_name == 'color_constancy_tran':
             data = data[data.apply(lambda x: x[attribute_name] <= 0.999, axis=1)]
         elif attribute_name == 'delta_color_constancy_tran':
             data = data[data.apply(lambda x: x[attribute_name] >= 0.00001, axis=1)]
         return data
-
 
     def _calc_metrics(self, boxes, anno, bound):
         """
@@ -439,7 +450,6 @@ class ExperimentVideoCube(object):
             norm_center_errors, flags = normalized_center_error(
                 boxes[valid, :], anno[valid, :], bound)
             return ious, dious, gious, center_errors, norm_center_errors, flags
-
 
     def _calc_curves(self, ious, dious, gious, center_errors, norm_center_errors):
         """
@@ -469,8 +479,7 @@ class ExperimentVideoCube(object):
 
         return succ_curve, succ_dcurve, succ_gcurve, prec_curve, norm_prec_curve
 
-
-    def report_robust(self,tracker_names):
+    def report_robust(self, tracker_names):
         """
         robust score under R-OPE
         """
@@ -486,12 +495,13 @@ class ExperimentVideoCube(object):
         for name in tracker_names:
             print('Evaluating Robust', name)
 
-            single_report_file = os.path.join(subset_analysis_dir, '{}_{}_robust_{}.json'.format(name, self.subset, str(self.repetition)))
+            single_report_file = os.path.join(subset_analysis_dir,
+                                              '{}_{}_robust_{}.json'.format(name, self.subset, str(self.repetition)))
 
             if os.path.exists(single_report_file):
-                f = open(single_report_file,'r',encoding='utf-8')
-                single_performance = json.load(f)            
-                performance.update({name:single_performance})
+                f = open(single_report_file, 'r', encoding='utf-8')
+                single_performance = json.load(f)
+                performance.update({name: single_performance})
                 f.close()
                 print('Existing result')
                 continue
@@ -499,47 +509,47 @@ class ExperimentVideoCube(object):
                 performance.update({name: {
                     'overall': {},
                     'seq_wise': {}}})
-            
+
             robust_list = []
 
             for s in range(len(self.dataset.seq_names)):
                 num = self.dataset.seq_names[s]
-               
+
                 print('Evaluate {} in {}'.format(name, num))
                 seq_name = self.dataset.seq_names[s]
 
-                corrcoef_path = os.path.join(self.root_dir, 'attribute', 'corrcoef','{}.txt'.format(num))
-                corrcoef = pd.read_csv(corrcoef_path,header=None,names=['corrcoef'])
+                corrcoef_path = os.path.join(self.root_dir, 'attribute', 'corrcoef', '{}.txt'.format(num))
+                corrcoef = pd.read_csv(corrcoef_path, header=None, names=['corrcoef'])
                 corrcoef_mean = np.nanmean(corrcoef)
 
-                restart_path = os.path.join(self.root_dir, 'attribute', 'restart','{}.txt'.format(num))
-                restart = len(open(restart_path,'r').readlines()) if os.path.getsize(restart_path) != 0 else 1
+                restart_path = os.path.join(self.root_dir, 'attribute', 'restart', '{}.txt'.format(num))
+                restart = len(open(restart_path, 'r').readlines()) if os.path.getsize(restart_path) != 0 else 1
 
-                init_path = os.path.join(self.result_dir, name, self.subset, 'init_{}_{}_{}.txt'.format(name, num, self.repetition))
-                init = len(open(init_path,'r').readlines()) if os.path.getsize(init_path) != 0 else 1
+                init_path = os.path.join(self.result_dir, name, self.subset,
+                                         'init_{}_{}_{}.txt'.format(name, num, self.repetition))
+                init = len(open(init_path, 'r').readlines()) if os.path.getsize(init_path) != 0 else 1
 
-                robust_score = self.sigmoid(1/corrcoef_mean)*(1-init/restart)
+                robust_score = self.sigmoid(1 / corrcoef_mean) * (1 - init / restart)
                 print(robust_score)
 
                 performance[name]['seq_wise'].update({seq_name: {
                     'restart': restart,
                     'init': init,
-                    'robust_score':robust_score}})
-                
-                robust_list.append(robust_score) 
-            
+                    'robust_score': robust_score}})
+
+                robust_list.append(robust_score)
+
             robust_overall = np.nanmean(np.array(robust_list))
 
             performance[name].update({'overall': {
-            'robust_score':robust_overall}})
-            
+                'robust_score': robust_overall}})
+
             with open(single_report_file, 'w') as f:
                 json.dump(performance[name], f, indent=4)
-                
+
         report_file = os.path.join(report_dir, 'robust.json')
         with open(report_file, 'w') as f:
             json.dump(performance, f, indent=4)
-                  
 
     def plot_curves_(self, report_files, tracker_names, attribute_name, rep):
         """
@@ -548,11 +558,11 @@ class ExperimentVideoCube(object):
         assert isinstance(report_files, list), \
             'Expected "report_files" to be a list, ' \
             'but got %s instead' % type(report_files)
-        
-        report_dir = os.path.join(self.report_dir, self.subset,  tracker_names[0])
+
+        report_dir = os.path.join(self.report_dir, self.subset, tracker_names[0])
         if not os.path.exists(report_dir):
             os.makedirs(report_dir)
-        
+
         performance = {}
         for report_file in report_files:
             with open(report_file) as f:
@@ -572,19 +582,18 @@ class ExperimentVideoCube(object):
                 norm_prec_file = os.path.join(report_dir, 'overall_norm_precision_plot_all.png')
         else:
             if attribute_name is not None:
-                succ_file = os.path.join(report_dir, '{}_success_plot_iou_{}.png'.format(attribute_name,rep))
-                succ_dfile = os.path.join(report_dir, '{}_success_plot_diou_{}.png'.format(attribute_name,rep))
-                succ_gfile = os.path.join(report_dir,'{}_success_plot_giou_{}.png'.format(attribute_name,rep))
-                prec_file = os.path.join(report_dir, '{}_precision_plot_{}.png'.format(attribute_name,rep))
-                norm_prec_file = os.path.join(report_dir,'{}_norm_precision_plot_{}.png'.format(attribute_name,rep))
+                succ_file = os.path.join(report_dir, '{}_success_plot_iou_{}.png'.format(attribute_name, rep))
+                succ_dfile = os.path.join(report_dir, '{}_success_plot_diou_{}.png'.format(attribute_name, rep))
+                succ_gfile = os.path.join(report_dir, '{}_success_plot_giou_{}.png'.format(attribute_name, rep))
+                prec_file = os.path.join(report_dir, '{}_precision_plot_{}.png'.format(attribute_name, rep))
+                norm_prec_file = os.path.join(report_dir, '{}_norm_precision_plot_{}.png'.format(attribute_name, rep))
             else:
                 succ_file = os.path.join(report_dir, 'overall_success_plot_iou_{}.png'.format(rep))
                 succ_dfile = os.path.join(report_dir, 'overall_success_plot_diou_{}.png'.format(rep))
                 succ_gfile = os.path.join(report_dir, 'overall_success_plot_giou_{}.png'.format(rep))
                 prec_file = os.path.join(report_dir, 'overall_precision_plot_{}.png'.format(rep))
                 norm_prec_file = os.path.join(report_dir, 'overall_norm_precision_plot_{}.png'.format(rep))
-        
-        
+
         key = 'overall'
 
         # markers
@@ -592,7 +601,7 @@ class ExperimentVideoCube(object):
         markers = [c + m for m in markers for c in [''] * 10]
 
         # filter performance by tracker_names
-        performance = {k:v for k,v in performance.items() if k in tracker_names}
+        performance = {k: v for k, v in performance.items() if k in tracker_names}
 
         # sort trackers by success score iou
         tracker_names = list(performance.keys())
@@ -631,7 +640,7 @@ class ExperimentVideoCube(object):
                     bbox_extra_artists=(legend,),
                     bbox_inches='tight',
                     dpi=300)
-        
+
         # sort trackers by success score diou
         tracker_names = list(performance.keys())
         succ = [t[key]['success_score_diou'] for t in performance.values()]
@@ -670,7 +679,7 @@ class ExperimentVideoCube(object):
                     bbox_inches='tight',
                     dpi=300)
 
-          # sort trackers by success score giou
+        # sort trackers by success score giou
         tracker_names = list(performance.keys())
         succ = [t[key]['success_score_giou'] for t in performance.values()]
         inds = np.argsort(succ)[::-1]
@@ -710,7 +719,7 @@ class ExperimentVideoCube(object):
 
         # sort trackers by precision score
         tracker_names = list(performance.keys())
-        
+
         prec = [t[key]['precision_score'] for t in performance.values()]
 
         inds = np.argsort(prec)[::-1]
@@ -727,7 +736,6 @@ class ExperimentVideoCube(object):
                             performance[name][key]['precision_curve'],
                             markers[i % len(markers)])
             lines.append(line)
-            
 
             legends.append('%s: [%.3f]' % (name, performance[name][key]['precision_score']))
         matplotlib.rcParams.update({'font.size': 7.4})
@@ -778,7 +786,6 @@ class ExperimentVideoCube(object):
 
         print('Saving normalized precision plots to', norm_prec_file)
         fig.savefig(norm_prec_file, dpi=300)
-    
 
     def _record(self, record_file, time_file, boxes, times):
         np.savetxt(record_file, boxes, fmt='%d', delimiter=',')
@@ -792,6 +799,5 @@ class ExperimentVideoCube(object):
             times = np.concatenate((exist_times, times), axis=1)
         np.savetxt(time_file, times, fmt='%.8f', delimiter=',')
 
-
     def sigmoid(self, x):
-        return 1.0/(1+np.exp(-x))
+        return 1.0 / (1 + np.exp(-x))
