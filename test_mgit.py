@@ -50,6 +50,7 @@ if __name__ == '__main__':
     # covert results to MGIT format
     for repetition in range(repetitions):
         experiment = ExperimentMGIT(dataset_dir, save_dir, subset, repetition + 1, version)
+        # the original results path will be "root_dir/tracker_name/original_results_folder", and the converted results will be saved to "root_dir/result"
         experiment.convert_results(root_dir, tracker_name, original_results_folder)
 
     # """ II. EVALUATION Note: please set your tracker in first, then add the other trackers (you can download

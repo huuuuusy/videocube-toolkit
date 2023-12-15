@@ -63,7 +63,6 @@ class ExperimentMGIT(object):
 
         track_results = {
             # name of tracker folder / name of results folder
-            # e.g
             tracker_folder: results_folder
         }
 
@@ -74,10 +73,6 @@ class ExperimentMGIT(object):
         seq_names = infos[self.subset]
 
         for k, v in track_results.items():
-            # print(k)
-            # print(os.path.join('./', root_path, 'results', k, self.subset))
-            # os.makedirs(os.path.join('./', root_path, 'results', k, self.subset))
-            # os.makedirs(os.path.join('./', root_path, 'time', k, self.subset))
             bbox_path_new = os.path.join(self.result_dir, k, self.subset)
             time_path_new = os.path.join(self.time_dir, k, self.subset)
             os.makedirs(bbox_path_new)
