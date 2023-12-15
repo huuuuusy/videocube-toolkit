@@ -259,6 +259,7 @@ experiment = ExperimentMGIT(
   version='tiny' # temporarily, the toolkit only support tiny version of MGIT
 )
 experiment.convert_results(
+  # the original results path will be "root_dir/tracker_name/original_results_folder", and the converted results will be saved to "root_dir/result"
   root_dir='/path_to_original_results', # the path of tracker e.g. JointNLT results
   tracker_name, # tracker name
   original_results_folder # original result folder name
