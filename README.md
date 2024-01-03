@@ -24,8 +24,7 @@ This repository contains the official python toolkit for running experiments and
 
 &emsp;\[[Project](http://videocube.aitestunion.com/)\]\[[PDF](https://arxiv.org/abs/2202.13073)\]
 
-
-![](./demo/demo.gif)
+[![](./demo/poster1.jpg)](https://www.youtube.com/watch?v=yhNbctSvOAs" "VideoCube Demo")
 
 [MGIT](http://videocube.aitestunion.com/) is a multi-modal global instance tracking benchmark to fully represent the complex spatio-temporal and casual relationships coupled in longer narrative content. If you use the MGIT database or toolkits for a research publication, please consider citing:
 
@@ -39,6 +38,9 @@ This repository contains the official python toolkit for running experiments and
 ```
 
 &emsp;\[[Project](http://videocube.aitestunion.com/)\]\[[PDF](https://huuuuusy.github.io/files/MGIT.pdf)\]
+
+[![](./demo/poster4.jpg)](https://www.youtube.com/watch?v=v9tpDc6Vpx0" "MGIT Demo")
+
 
 ## Table of Contents
 
