@@ -281,7 +281,7 @@ experiment.report([tracker.name],attribute_name)
 
 Attention, when evaluated on the __test subset__, you will have to submit your results to the [evaluation server](http://videocube.aitestunion.com/submit_supports) for evaluation. The `report` function will generate a `.zip` file which can be directly uploaded for submission. For more instructions, see [submission instruction](http://videocube.aitestunion.com/submit_supports).
 
-public evaluation results on MGIT's leaderboard (OPE Mechanism) will come soon.
+See public evaluation results on [MGIT's leaderboard (OPE Mechanism with Tiny Version, Action Granularity)](http://videocube.aitestunion.com/leaderboard_tiny_action), [MGIT's leaderboard (OPE Mechanism with Tiny Version, Activity Granularity)](http://videocube.aitestunion.com/leaderboard_tiny_activity) and [MGIT's leaderboard (OPE Mechanism with Tiny Version, Story Granularity)](http://videocube.aitestunion.com/leaderboard_tiny_story).
 
 ### Issues
 
