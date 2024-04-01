@@ -1,6 +1,8 @@
 # VideoCube & MGIT Python Toolkit
 
-> UPDATE:<br>[2023.12.14] Recently, we have proposed a new multi-modal global instance tracking benchmark named ***MGIT***, which consists of 150 long video sequences (all sequences are the same as those in VideoCube-Tiny, but with additional semantic information). This toolkit has been updated to support the MGIT, and you can find a demo in [test_mgit.py](./test_mgit.py). <br>
+> UPDATE:<br>
+> [2024.04.01] Update several missing files for the MGIT train set, based on [issue #6](https://github.com/huuuuusy/videocube-toolkit/issues/6). <br>
+> [2023.12.14] Recently, we have proposed a new multi-modal global instance tracking benchmark named ***MGIT***, which consists of 150 long video sequences (all sequences are the same as those in VideoCube-Tiny, but with additional semantic information). This toolkit has been updated to support the MGIT, and you can find a demo in [test_mgit.py](./test_mgit.py). <br>
 > [2023.02.08] To make it easier for users to research with VideoCube, we have selected 150 representative sequences from the original version (500 sequences) to form ***VideoCube-Tiny***. This toolkit has been updated to support the VideoCube-Tiny, and you can find a demo to select *tiny* or *full* version in [test_videocube.py](./test_videocube.py). <br>
 > [2022.06.20] Update the [SiamFC](https://github.com/huuuuusy/videocube-toolkit/blob/master/tracker/siamfc.py) based on [issue #2](https://github.com/huuuuusy/videocube-toolkit/issues/2) and [issue #3](https://github.com/huuuuusy/videocube-toolkit/issues/3). <br>
 > [2022.04.25] Update the [time](https://github.com/huuuuusy/videocube-toolkit/blob/master/videocube/trackers/__init__.py) calculation method based on [issue #1](https://github.com/huuuuusy/videocube-toolkit/issues/1). <br>
